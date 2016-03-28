@@ -1,0 +1,132 @@
+<div 
+    class="row products center" 
+    ng-repeat="product in ProductsMeta[categoryId]" 
+    ng-if="$index % 2 === 0">
+    
+    <!-- LEFT -->
+    <div class="products col col-50" ng-if="ProductsMeta[categoryId][$index+0].key">
+        <div class="products card">
+            <div class="products products-clear item item-stable item-image">
+                
+                <img 
+                    ng-click="goToProduct(ProductsMeta[categoryId][$index+0].key)"
+                    ng-src="{{getThumbnail(ProductsMeta[categoryId][$index+0].key) || 'img/placeholder.png'}}">
+                
+                <span id="inventory_nb_items" ng-show="ProductsMeta[categoryId][$index+0].index.inventory_nb_items > 0">
+                    Only {{ProductsMeta[categoryId][$index+0].index.inventory_nb_items}} left!
+                </span>
+                
+                <span id="discount_perc" ng-show="ProductsMeta[categoryId][$index+0].value.discount_perc">
+                     -{{ProductsMeta[categoryId][$index+0].value.discount_perc}}%
+                </span>
+                
+                <!--
+                <span id="discount_date_end">ProductsMeta[categoryId][$index+0].index.discount_date_end</span>
+                <span id="discount_perc">ProductsMeta[categoryId][$index+0].index.discount_perc</span>
+                 <span id="stats">Stats</span> -->
+            
+            </div>
+            <div class="products products-clear item item-stable item-text-wrap">
+                
+                <span id="title">
+                    {{ProductsMeta[categoryId][$index+0].value.title}}
+                </span>
+                <br>
+                <span id="old-price" ng-show="ProductsMeta[categoryId][$index+0].value.discount_perc">
+                    ${{ getOldPrice(ProductsMeta[categoryId][$index+0].index.price, ProductsMeta[categoryId][$index+0].value.discount_perc) }}
+                </span>
+                <span id="current-price">
+                    ${{ getCurrentPrice(ProductsMeta[categoryId][$index+0].index.price, ProductsMeta[categoryId][$index+0].value.discount_perc) }}
+                </span>
+                <br>
+                <span id="discount_date_end" ng-show="ProductsMeta[categoryId][$index+0].value.discount_date_end">
+                    Deal ends {{formatTimestamp(ProductsMeta[categoryId][$index+0].value.discount_date_end)}}
+                </span>
+                
+                
+                
+            </div>
+            <div class="products products-clear item item-stable item-text-wrap">
+                <div class="products row">
+                    <div class="products col">
+                        <button  style="margin: 0px !important;"
+                        class="button {{walletPressedCSS(ProductsMeta[categoryId][$index+0].key)}} button-block button-stable button-small ion-ios-heart"
+                        ng-click="saveItem(ProductsMeta[categoryId][$index+0].key)"> Save</button>
+                    </div>
+                    <div class="products col">
+                        <button style="margin: 0px !important;"
+                        class="button {{cartPressedCSS(ProductsMeta[categoryId][$index+0].key)}} button-block button-stable button-small ion-ios-cart"
+                        ng-click="addToCart(ProductsMeta[categoryId][$index+0].key, ProductsMeta[categoryId][$index+0])"> Add to cart</button>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+    <!-- // LEFT -->
+    
+    <!-- RIGHT -->
+    <div class="products col col-50" ng-if="ProductsMeta[categoryId][$index+1].key">
+        <div class="products card" >
+            <div class="products products-clear item item-stable item-image">
+                
+                <img 
+                    ng-click="goToProduct(ProductsMeta[categoryId][$index+1].key)"
+                    ng-src="{{getThumbnail(ProductsMeta[categoryId][$index+1].key) || 'img/placeholder.png'}}">
+                
+                <span id="inventory_nb_items" ng-show="ProductsMeta[categoryId][$index+1].index.inventory_nb_items  > 0">
+                    Only {{ProductsMeta[categoryId][$index+1].index.inventory_nb_items}} left!
+                </span>
+                
+                <span id="discount_perc" ng-show="ProductsMeta[categoryId][$index+1].value.discount_perc">
+                     -{{ProductsMeta[categoryId][$index+1].value.discount_perc}}%
+                </span>
+                
+                
+                
+                <!--
+                <span id="discount_date_end">ProductsMeta[categoryId][$index+1].index.discount_date_end</span>
+                <span id="discount_perc">ProductsMeta[categoryId][$index+1].index.discount_perc</span>
+                 <span id="stats">Stats</span> -->
+            
+            </div>
+            <div class="products products-clear item item-stable item-text-wrap">
+                
+                <span id="title">
+                    {{ProductsMeta[categoryId][$index+1].value.title}}
+                </span>
+                <br>
+                <span id="old-price" ng-show="ProductsMeta[categoryId][$index+1].value.discount_perc">
+                    ${{ getOldPrice(ProductsMeta[categoryId][$index+1].index.price, ProductsMeta[categoryId][$index+1].value.discount_perc) }}
+                </span>
+                <span id="current-price">
+                    ${{ getCurrentPrice(ProductsMeta[categoryId][$index+1].index.price, ProductsMeta[categoryId][$index+1].value.discount_perc) }}
+                </span>
+                <br>
+                <span id="discount_date_end" ng-show="ProductsMeta[categoryId][$index+1].value.discount_date_end">
+                    Deal ends {{formatTimestamp(ProductsMeta[categoryId][$index+1].value.discount_date_end)}}
+                </span>
+                
+                
+                
+            </div>
+            <div class="products products-clear item item-stable item-text-wrap">
+                <div class="products row">
+                    <div class="products col">
+                        <button  style="margin: 0px !important;"
+                        class="button {{walletPressedCSS(ProductsMeta[categoryId][$index+1].key)}} button-block button-stable button-small ion-ios-heart"
+                        ng-click="saveItem(ProductsMeta[categoryId][$index+1].key)"> Save</button>
+                    </div>
+                    <div class="products col">
+                        <button style="margin: 0px !important;"
+                        class="button {{cartPressedCSS(ProductsMeta[categoryId][$index+1].key)}} button-block button-stable button-small ion-ios-cart"
+                        ng-click="addToCart(ProductsMeta[categoryId][$index+1].key, ProductsMeta[categoryId][$index+1])"> Add to cart</button>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+    <!-- // RIGHT -->
+    
+</div>

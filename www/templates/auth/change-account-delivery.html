@@ -1,0 +1,17 @@
+<ion-modal-view>
+  <ion-header-bar>
+    <h1 class="title">Delivery settings</h1>
+    <div class="buttons">
+      <button class="button button-icon button-clear ion-ios-close-empty" ng-click="closeDelivery()"></button>
+    </div>
+  </ion-header-bar>
+  <ion-content>
+      
+      <delivery-details></delivery-details>
+      
+      <div class="center padding">
+        <button class="button button-block button-positive" type="submit" ng-click="saveDelivery()">Save changes</button>
+      </div>
+        
+  </ion-content>
+</ion-modal-view>

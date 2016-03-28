@@ -1,0 +1,148 @@
+<ion-view view-title="Product">
+  <ion-content>
+
+    <!-- title -->
+    <div ng-switch="status['generalView']" class="center">
+      <br>
+      <div ng-switch-when="loading">
+          Loading... <br><br>
+          <ion-spinner icon="ripple"></ion-spinner>
+      </div>
+      <div ng-switch-when="error" style="color: red !important;">
+          Oops... something went wrong
+      </div>
+      <div ng-switch-when="new">
+          Add a new product
+      </div>
+      <div ng-switch-when="edit">
+          Edit product
+      </div>
+      <br>
+    </div>
+    
+    <!-- submission -->
+    <ion-list ng-show="status['generalView'] != 'loading' && status['generalView'] != 'error'">
+      <ion-item class="item-divider">
+        Submission
+      </ion-item>
+      <ion-item class="item item-input item-select">
+        <div class="input-label">
+          Category
+        </div>
+        <select ng-model="ProductMeta.categoryId">
+          <option 
+              ng-repeat="(categoryKey, categoryObj) in Categories" 
+              ng-selected="{{categoryKey == ProductMeta.categoryId}}"
+              value="{{categoryKey}}">
+              {{categoryObj.title}}
+          </option>
+        </select>
+      </ion-item>
+      
+      <ion-item class="item item-input item-stacked-label">
+        <span class="input-label">Tags</span>
+        <input 
+          ng-model="ProductMeta.tagsString"
+          type="text" placeholder="Seperate by comma (tag1, tag2, ...)">
+      </ion-item>
+      
+      <ion-item class="item item-input item-stacked-label">
+        <span class="input-label">Title</span>
+        <input 
+          ng-model="ProductMeta.title"
+          type="text" placeholder="">
+      </ion-item>
+      
+      <ion-item class="item item-input item-stacked-label">
+        <span class="input-label">Price</span>
+        <input 
+          ng-model="ProductMeta.price"
+          type="number" placeholder="in USD">
+      </ion-item>
+      
+      <ion-item class="item item-input item-stacked-label">
+        <span class="input-label">Description</span>
+        <textarea 
+          ng-model="ProductMeta.description"
+          rows="6" 
+          class="submit-box-generic submit-input-wide" 
+          placeholder="Optional"></textarea>
+      </ion-item>
+      
+      <ion-item class="item-divider">
+        Attributes
+      </ion-item>
+      
+      <ion-item>
+        Edit attributes
+      </ion-item>
+      
+      <ion-item class="item-divider">
+        Images
+      </ion-item>
+      
+      <ion-item>
+        Edit images
+      </ion-item>
+      
+      <ion-item class="item-divider">
+        Promotion
+      </ion-item>
+      
+      <ion-item class="item item-input item-stacked-label">
+        <span class="input-label">Discount in %</span>
+        <input 
+          ng-model="ProductMeta.discount_perc"
+          type="number" placeholder="in full % (i.e. 25 for 25%)">
+      </ion-item>
+      
+      <ion-item class="item item-input item-stacked-label">
+        <span class="input-label">Discount date end</span>
+        <input 
+          ng-model="ProductMeta.discount_date_end_raw"
+          type="date" placeholder="">
+      </ion-item>
+      
+      <ion-item class="item item-input item-stacked-label">
+        <span class="input-label">Inventory</span>
+        <p>Set to -1 if irrelevant. Shows "Only X left"</p>
+        <input 
+          ng-model="IndexData.inventory_nb_items"
+          type="number" placeholder="" value="-1">
+      </ion-item>
+      
+      <ion-item class="item-divider">
+        Submit
+      </ion-item>
+      
+    </ion-list>
+    
+    <div class="padding center">
+      
+      <p id="error-message">{{ErrorMessages['categoryId']}}</p>
+      <p id="error-message">{{ErrorMessages['tagsString']}}</p>
+      <p id="error-message">{{ErrorMessages['title']}}</p>
+      <p id="error-message">{{ErrorMessages['price']}}</p>
+      <p id="error-message">{{ErrorMessages['attributes']}}</p>
+      <p id="error-message">{{ErrorMessages['description']}}</p>
+      <p id="error-message">{{ErrorMessages['discount_perc']}}</p>
+      <p id="error-message">{{ErrorMessages['discount_date_end']}}</p>
+      <p id="error-message">{{ErrorMessages['inventory_nb_items']}}</p>
+      
+      <button class="button button-block button-positive" ng-click="submitForm()">Submit or save changes</button>
+    </div>
+    
+    
+    
+  </ion-content>
+</ion-view>
+
+
+
+<canvas id="canvas0" style="display: none !important;"></canvas>
+<canvas id="canvas1" style="display: none !important;"></canvas>
+<canvas id="canvas2" style="display: none !important;"></canvas>
+<canvas id="canvas3" style="display: none !important;"></canvas>
+<canvas id="canvas4" style="display: none !important;"></canvas>
+<canvas id="canvas5" style="display: none !important;"></canvas>
+<canvas id="canvas9" style="display: none !important;"></canvas>

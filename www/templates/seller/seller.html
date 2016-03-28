@@ -1,0 +1,23 @@
+<ion-view view-title="Seller Home">
+  <ion-content ng-switch="status.loading">
+
+    <!-- view is loading... -->
+    <div ng-switch-when="true" class="padding center">
+      <br>
+      Loading... <br><br>
+      <ion-spinner icon="ripple"></ion-spinner>
+      
+    </div> <!-- ./ view is loading... -->
+
+    <!-- view has loaded -->
+    <div ng-switch-when="false">
+      
+      <ion-list>
+        <ion-item ng-repeat="productObj in ProductsMeta" ng-click="editProduct(productObj.key)">
+          {{productObj.value.title}}
+        </ion-item>
+      </ion-list>
+
+    </div> <!-- ./ view has loaded -->
+  </ion-content>
+</ion-view>

@@ -1,0 +1,46 @@
+<ion-view view-title="My orders">
+  
+  <ion-content ng-switch="status.loading">
+    
+    <div ng-switch-when="null">
+      <div class="center padding">
+        You have not made any purchases yet
+      </div>
+    </div>
+    <div ng-switch-when="true">
+      <div class="center padding">
+        Loading your orders... <br><br>
+        <ion-spinner icon="ripple"></ion-spinner>
+      </div>
+    </div>
+    <div ng-switch-when="false">
+      <!-- CONTENT -->
+      
+      <ion-refresher
+        pulling-icon="ion-ios-arrow-thin-down"
+        spinner="ripple"
+        pulling-text="Pull to refresh..."
+        on-refresh="doRefresh()">
+      </ion-refresher>
+
+      <!--Loaded -->
+      <ion-list>
+        <ion-item 
+          class="item item-text-wrap" ng-repeat="order in OrdersDataArray | orderBy: '-value.timestamp'"
+          ng-click="goToOrder(order.key)">
+          <h2>{{order.key}}</h2>
+          <p>{{order.value.CachedTotal.total_count}} item(s), ${{order.value.CachedTotal.total_value_incl.toFixed(2)}}</p>
+          <span class="badge badge-balanced">
+            {{formatTimestamp(order.value.timestamp)}}
+          </span>
+          
+        </ion-item>
+      </ion-list>
+      <!-- // Loaded -->
+      
+      <!-- // CONTENT -->
+    </div>
+    
+  </ion-content>
+</ion-view>
+

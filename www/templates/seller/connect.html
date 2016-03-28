@@ -1,0 +1,96 @@
+<ion-view view-title="Seller settings">
+  <ion-content ng-switch="status.loadingStripeConnect">
+
+    <!-- view is loading... -->
+    <div ng-switch-when="true" class="padding center">
+      <br>
+      Loading profile details... <br><br>
+      <ion-spinner icon="ripple"></ion-spinner>
+      
+    </div> <!-- ./ view is loading... -->
+
+    <!-- view has loaded -->
+    <div ng-switch-when="false">
+      
+      <div class="padding text-left">
+        
+        <p class="center">
+          <img src="img/stripe-logo.png" style="max-width: 50vw !important; height: auto">
+        </p>
+        <p>
+          We use Stripe Connect to transfer your earnings. 
+          Rather than having to collect sensitive bank account details or having to wait on transfers, 
+          you receive instant (debit) card transfers on your Stripe Account.
+        </p>
+        <p>
+          To get started, make sure that you have setup your Stripe Account and 
+          gave permission to connect your account to our marketplace. Click on Connect with Stripe to get started.
+        </p>
+        
+      </div>
+      
+      
+      <ion-list>
+        
+        <ion-item>
+          Account status
+          <span class="item-note">
+            <span 
+                class="text-balanced" 
+                ng-show="status['setupStripeConnect'] == true && !status['setupStripeConnectMode']">
+                Account connected
+            </span>
+            <span 
+                class="text-assertive" 
+                ng-show="status['setupStripeConnect'] == false && !status['setupStripeConnectMode']">
+                Account not connected
+            </span>
+            <span 
+                class="text-positive" 
+                ng-show="status['setupStripeConnectMode']" 
+                ng-click="account.refreshStripeConnectAuth()">
+                Refresh page
+            </span>
+          </span>
+        </ion-item>
+        
+        <div ng-show="status['authorize_url']">
+          
+          <ion-item ng-show="SCData['stripe_user_id']">
+            Stripe ID
+            <span class="item-note">
+              {{SCData['stripe_user_id']}}
+            </span>
+          </ion-item>
+          
+          <ion-item 
+            ng-show="!status['setupStripeConnectMode'] && (status['setupStripeConnect'] == false || status['generateNewToken'] == true)"
+            href="{{status['authorize_url']}}"
+            target="_blank"
+            ng-click="connectWithStripe()">
+            Connect with Stripe
+          </ion-item>
+          
+          <ion-item 
+            ng-show="status['setupStripeConnect'] == true && !status['setupStripeConnectMode']"
+            href="{{status['authorize_url']}}"
+            target="_blank"
+            ng-click="connectWithStripe()">
+            Change account
+          </ion-item>
+          
+          <ion-item
+            ng-show="status['setupStripeConnectMode']"
+            ng-click="refreshStripeConnectAuth()">
+            Refresh
+          </ion-item>
+          
+        </div>
+        
+        
+
+      </ion-list>
+
+    </div> <!-- ./ view has loaded -->
+  </ion-content>
+</ion-view>

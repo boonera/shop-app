@@ -1,0 +1,92 @@
+<ion-modal-view>
+  
+  <ion-header-bar>
+    <h1 class="title">
+      <span ng-show="status.loginMode == 'password'">Ionic Shop ++</span>
+    </h1>
+    <div class="buttons">
+      <button class="button button-icon button-assertive ion-ios-close-empty" ng-click="closeLogin()"></button>
+    </div>
+  </ion-header-bar>
+  
+  <ion-content class="center" ng-switch="status.loginMode">
+
+    <div ng-switch-when="intro">
+      <!-- INTRO -->
+      <ion-slide-box 
+        class="intro slidebox"
+        on-slide-changed="slideHasChanged($index)">
+        <ion-slide>
+          <div class="box intro slide">
+            <h1>IONIC SHOP ++</h1>
+            <p>Explanation of your service slide 1</p>
+          </div>
+        </ion-slide>
+        <ion-slide>
+          <div class="box intro slide">
+            <h1>WE ARE AWESOME</h1>
+            <p>Explanation of your service slide 2</p>
+          </div>
+        </ion-slide>
+      </ion-slide-box>
+      <div class="intro below">
+        <button class="button button-positive icon-left ion-social-facebook" ng-click="doLoginSocial('facebook');">
+          Sign in with Facebook
+        </button>
+        <p class="padding">
+          <span class="note">
+            By signing up, you agree to our Terms of Use and Privacy Policy 
+          </span>
+        </p>
+        <button class="button button-stable" ng-click="status['loginMode'] = 'password'">
+          Sign in with E-mail
+        </button>
+      </div>
+    </div>
+    <!-- // INTRO -->
+    <div ng-switch-when="password" class="center">
+      <!-- PASSWORD -->
+      <form ng-submit="doLogin()">
+        <div class="list">
+          <label class="item item-input item-floating-label">
+            <span class="input-label">Email</span>
+            <input type="email" ng-model="loginData.userEmail" placeholder="Email">
+          </label>
+          <label class="item item-input item-floating-label">
+            <span class="input-label">Password</span>
+            <input type="password" ng-model="loginData.userPassword" placeholder="Password">
+          </label>
+        </div>
+        <div class="padding">
+          <button class="button button-block button-balanced" type="submit">Sign in</button>
+        </div>
+      </form>
+      <div class="padding">
+        <button class="button button-positive icon-left ion-social-facebook" ng-click="doLoginSocial('facebook');">
+          Sign in with Facebook
+        </button>
+      </div>
+
+      <p>
+        <span class="note">
+          By signing up, you agree to our Terms of Use and Privacy Policy 
+        </span>
+      </p>
+          
+      <!-- other -->
+      <div class="row">
+          <div class="col">
+             <button class="button button-block button-stable" ng-click="signUp()">Sign up</button>
+          </div>
+          <div class="col">
+            <button class="button button-block button-stable" ng-click="changePassword('lost')">Forgot password?</button>
+          </div>
+      </div>
+      
+      
+      
+      <!-- // PASSWORD -->
+    </div>
+
+  </ion-content>
+</ion-modal-view>

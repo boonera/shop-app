@@ -1,0 +1,12 @@
+{
+  "name": "Boonera",
+  "app_id": "1377d683",
+  "gulpStartupTasks": [
+    "sass",
+    "watch"
+  ],
+  "watchPatterns": [
+    "www/**/*",
+    "!www/lib/**/*"
+  ]
+}

@@ -1,0 +1,67 @@
+<div class="checkout main" ng-repeat="(productId, item) in Cart.CachedList">
+  <!-- row I -->
+  <div class="row">
+    <div class="checkout col col-20 center" style="padding-left: 0px !important; padding-right: 0px">
+      <button
+      ng-click="changeAmount(productId, Cart.CachedTotal[productId].amount+1)"
+      class="button button-small button-balanced icon ion-ios-plus-empty"></button>
+      <button 
+        ng-click="changeAmount(productId, Cart.CachedTotal[productId].amount-1)"
+        class="button button-small button-assertive icon ion-ios-minus-empty"></button>
+    </div>
+    <div class="checkout title col col-50 text-left">
+      <p>{{Cart.CachedMeta[productId].value.title}}</p>
+      <p>
+        <span class="note">
+          {{Cart.CachedMeta[productId].value.categoryId}}
+        </span>
+      </p>
+    </div>
+    <div class="checkout col col-30 text-right">
+      <p>
+        ${{Cart.CachedTotal[productId].totalPrice.toFixed(2)}}
+      </p>
+      <p>
+        <span class="note">
+          {{Cart.CachedTotal[productId].amount}} x ${{Cart.CachedTotal[productId].price.toFixed(2)}} </span>
+      </p>
+    </div>
+  </div>
+  <!-- row II -->
+  <div class="row" ng-show="Cart.CachedMeta[productId].value.attributes">
+    <div class="checkout col">
+      
+      <ion-list>
+        <ion-item 
+          class="item item-input item-select item-cart" 
+          ng-repeat="(aType, value) in Cart.CachedMeta[productId].value.attributes">
+          <div class="input-label">
+            {{aType}}
+          </div>
+          <select 
+            ng-model="Cart.CachedMeta[productId].selection[aType]">
+            <option
+              ng-selected="{{aValue == Cart.CachedMeta[productId].selection[aType]}}"
+              value="{{aValue}}"
+              ng-repeat="(aValue, other) in Cart.CachedMeta[productId].value.attributes[aType]">
+              {{aValue}}
+            </option>
+          </select>
+        </ion-item>
+      </ion-list>
+    </div>
+  </div>
+</div>
+
+
+<div class="checkout row" ng-show="Cart.CachedTotal['total_count'] != 0">
+<!-- title -->
+<div class="checkout col col-70 text-left">
+  <h2>Order Total</h2>
+</div>
+<div class="checkout col col-30 text-right">
+  <p>
+    ${{Cart.CachedTotal['total_value'].toFixed(2)}}
+  </p>
+</div>
+</div>

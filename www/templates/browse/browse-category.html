@@ -1,0 +1,73 @@
+<ion-view view-title="{{Categories[categoryId].title || categoryId}}">
+  
+  <ion-nav-buttons side="right">
+    <button class="button button-clear button-icon ion-ios-more" ng-click="openPopover($event)"></button>
+    &nbsp;&nbsp;&nbsp;
+    <button class="button button-clear button-icon ion-ios-search" ng-click="goTo('app.search')"></button>
+  </ion-nav-buttons>
+  
+  <ion-content ng-switch="status.loading[categoryId]">
+    
+    <div ng-switch-when="true">
+      <div class="center padding">
+        <br>
+        Loading the latest hot products... <br><br>
+        <ion-spinner icon="ripple"></ion-spinner>
+      </div>
+    </div>
+    <div ng-switch-when="false">
+      <!-- CONTENT -->
+      
+      <ion-refresher
+        pulling-icon="ion-ios-arrow-thin-down"
+        spinner="ripple"
+        pulling-text="Pull to refresh..."
+        on-refresh="doRefresh()">
+      </ion-refresher>
+
+      <!--Loaded -->
+      <browse-products></browse-products>
+      <!-- // Loaded -->
+      
+      <!-- // CONTENT -->
+    </div>
+    
+  </ion-content>
+</ion-view>
+
+
+<script id="popovers/popover-sorting.html" type="text/ng-template">
+  <ion-popover-view>
+    <ion-header-bar>
+      <h1 class="title">Change sorting</h1>
+    </ion-header-bar>
+    <ion-content>
+      <ion-list>
+        <ion-item ng-click="selectSortProperty('price', 'desc')">
+          Price (H-L)
+        </ion-item>
+        <ion-item ng-click="selectSortProperty('price', 'asc')">
+          Price (L-H)
+        </ion-item>
+        <ion-item ng-click="selectSortProperty('sales_count', 'desc')">
+          Most popular
+        </ion-item>
+        <ion-item ng-click="selectSortProperty('sales_value_total', 'desc')">
+          Highest turnover
+        </ion-item>
+        <ion-item ng-click="selectSortProperty('comments_count', 'desc')">
+          Most discussed
+        </ion-item>
+        <ion-item ng-click="selectSortProperty('ratings_overall', 'desc')">
+          Best rating
+        </ion-item>
+        <ion-item ng-click="selectSortProperty('timestamp_creation', 'desc')">
+          Date
+        </ion-item>
+        <ion-item ng-click="selectSortProperty('timestamp_update', 'desc')">
+          Last updated
+        </ion-item>
+      </ion-list>
+    </ion-content>
+  </ion-popover-view>
+</script>

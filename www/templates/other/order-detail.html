@@ -1,0 +1,21 @@
+<ion-view view-title="{{orderId}}">
+  
+  <ion-content ng-switch="status.loading">
+    
+    <div ng-switch-when="true">
+      <div class="center padding">
+        Loading your order... <br><br>
+        <ion-spinner icon="ripple"></ion-spinner>
+      </div>
+    </div>
+    <div ng-switch-when="false">
+      <!-- CONTENT -->
+
+      <checkout-cart-overview></checkout-cart-overview>
+      
+      <!-- // CONTENT -->
+    </div>
+    
+  </ion-content>
+</ion-view>
+

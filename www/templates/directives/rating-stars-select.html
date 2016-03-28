@@ -1,0 +1,7 @@
+<button 
+    class="button button-clear star-large"
+    ng-repeat="value in [1,2,3,4,5]"
+    ng-click="selectRatingStar(value)">
+    <i ng-show="value <= FormData.ratingValue" class="icon ion-ios-star"></i>
+    <i ng-show="value > FormData.ratingValue || !FormData.ratingValue" class="icon ion-ios-star-outline"></i>
+</a>

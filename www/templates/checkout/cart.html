@@ -1,0 +1,30 @@
+<ion-view view-title="Cart">
+  <ion-content class="grey">
+    
+    <p class="center" ng-show="Cart.CachedTotal['total_count'] == 0">
+      <br>
+      Your cart is empty
+    </p>
+    
+    <checkout-cart></checkout-cart>
+    
+    <!-- Spacing -->
+    <br><br><br><br><br>
+    
+  </ion-content>
+  
+  <!-- https://github.com/driftyco/ionic/issues/2824 -->
+  <div class="bar bar-footer bar-balanced" ng-show="Cart.CachedTotal['total_count'] != 0">
+    <button 
+      class="button button-full button-uppercase" style="margin: 0px; width: 100%; height: 100%"
+      ng-click="goToCheckout()">
+        <span ng-show="AuthData.uid">
+          Place order
+        </span>
+        <span ng-show="!AuthData.uid">
+          Sign in to place order
+        </span>
+      </button>
+  </div>
+
+</ion-view>

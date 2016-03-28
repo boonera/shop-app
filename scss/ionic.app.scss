@@ -1,0 +1,437 @@
+/*
+To customize the look and feel of Ionic, you can override the variables
+in ionic's _variables.scss file.
+
+For example, you might change some of the default colors:
+
+$light:                           #fff !default;
+$stable:                          #f8f8f8 !default;
+$positive:                        #387ef5 !default;
+$calm:                            #11c1f3 !default;
+$balanced:                        #33cd5f !default;
+$energized:                       #ffc900 !default;
+$assertive:                       #ef473a !default;
+$royal:                           #886aea !default;
+$dark:                            $base-color !default;
+
+$greylight: #f2f2f2
+*/
+
+// The path for our ionicons font files, relative to the built CSS in www/css
+$ionicons-font-path: "../lib/ionic/fonts" !default;
+
+// Colors
+// -------------------------------
+$positive:                        #886aea !default;
+$greylight:                           #f2f2f2 !default;//#f2f2f2 !default;
+$assertive:                           #ef473a !default;
+$dark:                                #444 !default;
+$energized:                       #ffc900 !default;
+$balanced:                        #33cd5f !default;
+
+// Content
+// -------------------------------
+.dark {
+    background: $dark;
+}
+.grey {
+    background: $greylight;
+}
+
+// Buttons
+// -------------------------------
+.button.button-assertive.button-icon {
+    color: #000 !important;
+    background: rgba(0,0,0,0) !important;
+}
+
+
+.button-uppercase {
+    font-size: 12px !important;
+    text-transform: uppercase !important;
+    letter-spacing: 2px !important;
+}
+
+// Slidebox Intro
+// -------------------------------
+.intro.slidebox {
+    background: #fff;
+    width: 100vw;
+    height: 50vh;
+    text-align: center;
+}
+.intro.slide {
+    padding: 30px;
+}
+.intro.below {
+    width: 100vw;
+    height: 20vh;
+    padding: 15px;
+    text-align: center;
+}
+
+.profile img {
+    height: 150px;
+    width: 150px;
+    border-radius: 100%;
+    margin-top: 20px;
+}
+
+// Product
+// -------------------------------
+.product.slidebox {
+    background: #444;
+    padding: 0px !important;
+}
+.product {
+    position: relative; 
+}
+.product img {
+    width: auto;
+    height: auto;
+    max-height: 90vh;
+    max-width: 100vw;
+}
+.product.small img {
+    max-height: 40vh;
+    max-width: 100vw;
+}
+.product.extend-icon {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    text-align: right;
+    color: #fff !important;
+    z-index: 100;
+    padding-right: 20px;
+    padding-bottom: 15px;
+    font-size: 28px !important;
+}
+
+.statistics {
+    background: $greylight;
+    color: $positive;
+}
+span.larger {
+    font-size: 16px !important;
+}
+
+.row.author {
+    margin: 0px 0px !important;
+    padding: 20px 20px !important;
+    border-top: 1px solid $greylight;
+    border-bottom: 1px solid $greylight;
+    margin-bottom: 0px !important;
+}
+.author h1, .product h1 {
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-size: 16px !important;
+}
+.product h1 {
+    margin-top: 20px !important;
+}
+.author h2, .product h2 {
+    font-size: 12px !important;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: #ddd;
+}
+
+.product.tags {
+    margin: 20px 0px !important;
+    padding: 10px 10px !important;
+    margin-bottom: 0px !important;
+}
+button.tagbutton {
+    background: lighten($positive, 25%) !important;
+    color: #fff !important;
+    padding: 5px 10px !important;
+    border-radius: 12px !important;
+    margin: 3px 3px !important;
+    text-transform: uppercase !important;
+    letter-spacing: 2px !important;
+    font-size: 10px !important;
+}
+
+hr {
+    border: 1px solid $greylight !important;
+}
+
+.author img {
+    height: 50px !important;
+    width: 50px !important;
+    border-radius: 100%;
+}
+
+// Interaction
+// -------------------------------
+.interaction {
+    padding: 10px 20px;
+    padding-bottom: 20px !important;
+}
+.interaction-header {
+    margin-bottom: 10px !important;
+    text-align: center;
+}
+.interaction-header button {
+    font-size: 12px !important;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-weight: 600;
+    text-decoration: none !important;
+    color: $positive !important;
+    margin: 0px !important;
+    padding: 0px !important;
+};
+
+// Items
+// -------------------------------
+
+.title, .item-divider {
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-size: 12px !important;
+}
+.item-divider {
+    background: $greylight !important;
+}
+.item-divider span.item-note {
+    margin-top: 3px;
+    color: $positive !important;
+    font-size: 10px !important;
+}
+.item {
+    border: 1px solid $greylight !important;
+}
+
+.products.row, .products.item {
+    padding: 0px !important;
+    margin: 0px !important;
+}
+.products.col, .products.col.card {
+    padding: 0px !important;
+    margin: 0px !important;
+}
+.products-clear.item {
+    border: 0px !important;
+}
+.products.card img { 
+   max-width: 100%;
+   height: auto;
+   min-height: 100px;
+   max-height: 250px;
+   position: relative; 
+}
+
+#inventory_nb_items { 
+   position: absolute; 
+   bottom: 0px; 
+   right: 0; 
+   text-align: right;
+   padding: 5px;
+   font-size: 12px;
+   background: $assertive;
+   color: #fff;
+}
+#inventory_nb_items_top {
+   position: absolute; 
+   top: 0px; 
+   right: 0; 
+   text-align: right;
+   padding: 5px;
+   font-size: 12px;
+   background: $assertive;
+   color: #fff;
+}
+#discount_perc { 
+   position: absolute; 
+   top: 0px; 
+   left: 0; 
+   text-align: left;
+   padding: 5px;
+   font-size: 12px;
+   background: $assertive;
+   color: #fff;
+}
+
+#title {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    text-align: center !important;
+    width: 100%;
+    line-height: 14px !important;
+}
+
+#discount_date_end {
+    color: #444;
+    font-size: 12px;
+}
+
+#old-price {
+    text-decoration: line-through;
+    color: #ddd;
+    font-size: 12px;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+#current-price {
+    font-weight: 600;
+    font-size: 12px;
+}
+#categoryId {
+    text-transform: capitalize;
+}
+
+.card {
+    margin: 0px !important;
+}
+.card, .card.item {
+    margin: 10px !important; // whitespace between cards
+    border: 0px !important;
+    box-shadow: none !important;
+}
+
+// Inputs
+// -------------------------------
+
+.input-label {
+    width: 100% !important;
+    text-align: left !important;
+}
+
+// Checkout
+
+.checkout {
+    padding: 10px 15px !important;
+    margin: 0px !important;
+    background: #fff;
+}
+.checkout.title {
+    padding-left: 10px !important;
+}
+.checkout.main {
+    border-bottom: 1px solid $greylight;
+    margin: 0px !important;
+    padding: 0px !important;
+}
+.checkout.row {
+    margin: 0px !important;
+    padding: 0px !important;
+}
+.checkout p {
+    width: 100%;
+}
+.checkout-sub.row {
+    padding: 0px 10px !important;
+    margin: 0px !important;
+    background: #fff;
+}
+.checkout-sub.col {
+    margin: 0px !important;
+    padding: 0px 5px !important;
+}
+.checkout h2 {
+    margin-top: 5px !important;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+.checkout-sub h2 {
+    margin-top: 5px !important;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-weight: 400 !important;
+    margin-bottom: 0px !important;
+}
+.checkout-sub p {
+    margin: 3px 0px !important;
+    font-size: 11px;
+}
+.checkout p {
+    margin: 3px 0px !important;
+}
+.checkout button {
+    margin-top: 5px !important;
+    border-radius: 100% !important;
+    height: 30px !important;
+    width: 30px !important;
+    min-height: 30px !important;
+}
+.item-cart.input-label {
+    font-size: 12px !important;
+}
+
+
+// Decorators and Others
+// -------------------------------
+
+.badge-custom {
+    background: $assertive;
+    padding: 0px 5px;
+    border-radius: 25px;
+    font-weight: 600;
+    font-size: 12px;
+}
+
+
+.padding-sides {
+    padding: 0px 10px;
+}
+.padding-sides.large {
+    padding: 0px 20px;
+}
+.star-active {
+    color: $positive !important;
+}
+.star-inactive {
+    color: lighten($positive, 25%) !important;
+}
+
+.note {
+    color: #ddd;
+    font-size: 12px;
+}
+.button-pressed {
+    color: $energized !important;
+}
+
+.error-messages {
+    color: $assertive;
+}
+
+.center {
+    text-align: center;
+}
+
+.text-left {
+    text-align: left;
+}
+.text-right {
+    text-align: right;
+}
+
+.spinner.spinner-small svg {
+    height: 15px !important;
+    width: auto;
+}
+
+.text-positive {
+    color: $positive !important;
+}
+.text-balanced {
+    color: $balanced !important;
+}
+.text-assertive {
+    color: $assertive !important;
+}
+
+p.small, span.small {
+    font-size: 12px;
+}
+
+
+// Include all of Ionic
+@import "www/lib/ionic/scss/ionic";
