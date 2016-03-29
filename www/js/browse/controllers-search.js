@@ -73,6 +73,8 @@ angular.module('starter.controllers-search', [])
                   var ProductsMetaAdj = Utils.formatSearchResults(ProductsMeta); // hack
                   $scope.ProductsMeta[$scope.categoryId] = Utils.sortArray(Utils.arrayValuesAndKeysProducts(ProductsMetaAdj), $scope.status.sortMethod, $scope.status.sortProperty);
                   
+                  if($scope.ProductsMeta[$scope.categoryId] == null) {$scope.status['loading'] = null;}
+                  
                   // @dependencies
                   loadThumbnails(ProductsMetaAdj);
               }

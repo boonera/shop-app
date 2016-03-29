@@ -4,9 +4,10 @@
   </button>
 </div>
 
-<div class="image-stack center" ng-repeat="(key, image) in ProductImages">
-  <img ng-src="{{image}}">
-  <br>
-  <a href="" ng-click="removeScreenshot(key)">Remove</a>
-</div>
 
+<ion-list>
+  <ion-item class="item item-thumbnail-left item-icon-right" ng-repeat="(key, image) in ProductImages" ng-click="removeScreenshot(key)">
+    <img ng-src="{{image}}">
+    <i class="icon ion-ios-minus-empty"></i>
+  </ion-item>
+</ion-list>

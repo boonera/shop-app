@@ -27,7 +27,7 @@
       </ion-item>
       <ion-item class="item item-input item-select">
         <div class="input-label">
-          Category
+          Category*
         </div>
         <select ng-model="ProductMeta.categoryId">
           <option 
@@ -40,21 +40,21 @@
       </ion-item>
       
       <ion-item class="item item-input item-stacked-label">
-        <span class="input-label">Tags</span>
+        <span class="input-label">Tags*</span>
         <input 
           ng-model="ProductMeta.tagsString"
           type="text" placeholder="Seperate by comma (tag1, tag2, ...)">
       </ion-item>
       
       <ion-item class="item item-input item-stacked-label">
-        <span class="input-label">Title</span>
+        <span class="input-label">Title*</span>
         <input 
           ng-model="ProductMeta.title"
           type="text" placeholder="">
       </ion-item>
       
       <ion-item class="item item-input item-stacked-label">
-        <span class="input-label">Price</span>
+        <span class="input-label">Price*</span>
         <input 
           ng-model="ProductMeta.price"
           type="number" placeholder="in USD">
@@ -120,7 +120,7 @@
       
     </ion-list>
     
-    <div class="padding center">
+    <div class="padding center" style="color: red !important;">
       
       <p id="error-message">{{ErrorMessages['categoryId']}}</p>
       <p id="error-message">{{ErrorMessages['tagsString']}}</p>

@@ -1,7 +1,7 @@
 angular.module('starter.controllers-submit', [])
 
 .controller('SubmitCtrl', function(
-  $scope, $state, $timeout, $stateParams, $ionicActionSheet, $ionicModal, $ionicPopup,
+  $scope, $state, $timeout, $stateParams, $ionicActionSheet, $ionicModal, $ionicPopup, $ionicHistory,
     Auth, Products, Utils, Codes, Categories, CordovaCamera) {
       
       // controller variables
@@ -238,12 +238,21 @@ angular.module('starter.controllers-submit', [])
             $scope.status['submitLoading']      = false;
             $scope.status['containsNoError']    = false;
             $scope.ErrorMessages['general']     = "Ooops Something went wrong... try again or contact us with reference code " + error;
+            
+            Utils.showMessage($scope.ErrorMessages['general'], 2000);
         };
         
         // fn success
         function handleSuccess(productId) {
             $scope.status['submitLoading']      = false;
             $scope.status['containsNoError']    = false;
+            
+            $ionicHistory.nextViewOptions({
+              disableBack: true
+            });
+            
+            Utils.showMessage('Item added!', 1500);
+
             $state.go('app.seller');
         };
         

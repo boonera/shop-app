@@ -12,12 +12,35 @@
     <!-- view has loaded -->
     <div ng-switch-when="false">
       
+      <div class="padding center" ng-show="ProductsMeta">
+        Swipe left to unlock more options
+      </div>
+      
       <ion-list>
-        <ion-item ng-repeat="productObj in ProductsMeta" ng-click="editProduct(productObj.key)">
+        <ion-item class="item item-icon-right" ng-click="goTo('app.submit')">
+          Add a product
+          <i class="icon ion-ios-plus-empty"></i>
+        </ion-item>
+        <ion-item class="item item-icon-right" ng-repeat="productObj in ProductsMeta" ng-click="editProduct(productObj.key)">
           {{productObj.value.title}}
+          <i class="icon ion-ios-arrow-thin-left"></i>
+          <ion-option-button class="button-assertive" ng-click="deleteItem(productObj.key)">Delete</ion-option-button>
         </ion-item>
       </ion-list>
 
     </div> <!-- ./ view has loaded -->
+    
+    <!-- view is loading... -->
+    <div ng-switch-when="null">
+      
+      <ion-list>
+        <ion-item class="item item-icon-right" ng-click="goTo('app.submit')">
+          Add a product
+          <i class="icon ion-ios-plus-empty"></i>
+        </ion-item>
+      </ion-list>
+      
+    </div> <!-- ./ view is loading... -->
+    
   </ion-content>
 </ion-view>

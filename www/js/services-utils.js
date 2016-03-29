@@ -43,18 +43,28 @@ angular.module('starter.services-utils', [])
   };
   
   self.arrayValuesAndKeysProducts = function(targetObject) {
-        return Object.keys(targetObject).map(
-            function (key) {
-                if(targetObject[key] != null) {
-                    return {
-                        key: key, 
-                        value: targetObject[key].meta,
-                        index: targetObject[key].index
-                    }
-                }
+    var noNull = false;
+    angular.forEach(targetObject, function(value, key){
+      if(value != null && value != undefined) {
+        noNull = true;
+      }
+    })
+    if(noNull) {
+      return Object.keys(targetObject).map(
+        function (key) {
+          if(targetObject[key] != null) {
+            return {
+              key: key, 
+              value: targetObject[key].meta,
+              index: targetObject[key].index
             }
-        );
+          }
+        }
+      );
+    } else {
+      return null;
     };
+  };
 
   self.arrayValues = function(targetObject) {
     return Object.keys(targetObject).map(
@@ -79,15 +89,19 @@ angular.module('starter.services-utils', [])
       sortProperty = "timestamp_creation";
     }
     */
-    switch(sortMethod){
-      case 'asc':
-        //
-        return targetObject.sort(compareAsc);
-      break
-      case 'desc':
-        //
-        return targetObject.sort(compareDesc);
-      break
+    if(targetObject != null) {
+      switch(sortMethod){
+        case 'asc':
+          //
+          return targetObject.sort(compareAsc);
+        break
+        case 'desc':
+          //
+          return targetObject.sort(compareDesc);
+        break
+      }
+    } else {
+      return null
     }
     function compareAsc(a,b) {
         a = a['index'];

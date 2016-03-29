@@ -1,6 +1,6 @@
 <div 
     class="row products center" 
-    ng-repeat="product in ProductsMeta[categoryId]" 
+    ng-repeat="product in ProductsMeta[categoryId] track by $index" 
     ng-if="$index % 2 === 0">
     
     <!-- LEFT -->

@@ -42,6 +42,8 @@ angular.module('starter.controllers-wallet', [])
                 $scope.status['loading'][categoryId] = false;
                 $scope.ProductsMeta[categoryId] = Utils.sortArray(Utils.arrayValuesAndKeysProducts(ProductsMeta), $scope.status.sortMethod, $scope.status.sortProperty);
                 
+                if($scope.ProductsMeta[categoryId] == null) {$scope.status['loading'][categoryId] = null;}
+                
                 // @dependencies
                 loadThumbnails(ProductsMeta);
             }
