@@ -1,0 +1,45 @@
+<ion-view view-title="Product > Images">
+  <ion-content>
+
+    <!-- title -->
+    <div class="center">
+      <br>
+      Edit images
+      <br>
+    </div>
+    
+    <div class="padding center">
+      <button class="button button-positive icon-left ion-ios-plus-empty" ng-click="addImage()">
+        Add an image
+      </button>
+    </div>
+    
+    
+    <ion-list>
+      <ion-item ng-repeat="(key, image) in ProductImages">
+        {{key}}
+      </ion-item>
+    </ion-list>
+    
+    
+    <div class="center padding">
+      <button class="button button-block button-stable" ng-click="goBack()">
+        Save and go back
+      </button>
+    </div>
+    
+    
+    
+    
+  </ion-content>
+</ion-view>
+
+
+
+<canvas id="canvas0" style="display: none !important;"></canvas>
+<canvas id="canvas1" style="display: none !important;"></canvas>
+<canvas id="canvas2" style="display: none !important;"></canvas>
+<canvas id="canvas3" style="display: none !important;"></canvas>
+<canvas id="canvas4" style="display: none !important;"></canvas>
+<canvas id="canvas5" style="display: none !important;"></canvas>
+<canvas id="canvas9" style="display: none !important;"></canvas>

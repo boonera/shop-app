@@ -30,8 +30,11 @@
           
           <!-- extend icon -->
           <span class="product extend-icon" ng-switch="status.productSizeCSS">
-            <span ng-switch-when="product small"><i class="icon ion-arrow-expand"></i></span>
-            <span ng-switch-when="product"><i class="icon ion-arrow-shrink"></i></span>
+            <span style="font-size: 8px !important;">Click to enlarge/shrink</span>
+            <!-- 
+            <span ng-switch-when="product small"><i class="icon ion-arrow-expand" ng-click="changeImageSize()"></i></span>
+            <span ng-switch-when="product"><i class="icon ion-arrow-shrink" ng-click="changeImageSize()"></i></span>
+            -->
           </span>
         </ion-slide>
       </ion-slide-box>

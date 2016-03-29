@@ -1,0 +1,64 @@
+<h6>Attribute Types</h6>
+
+<div ng-show="submit.ProductMeta.attributes">
+    <br>
+    <p>Active attribute types</p>
+    
+    <p ng-repeat="(aType, value) in submit.ProductMeta.attributes">
+        &#10687;&nbsp;{{aType}}&nbsp;&nbsp; 
+        <a href="" ng-click="submit.deleteAttributeType(aType)">x Delete</a>
+    </p>
+    
+</div>
+
+<div>
+    <br>
+    <p>+ Add an attribute type</p>
+    <input
+        class="submit-box-generic submit-input-narrow" type="text" placeholder="Type"
+        ng-model="submit.status.newAttributeType">
+    <button class="btn btn-positive-outline" ng-click="submit.addAttributeType()">
+        Add
+    </button>
+</div>
+
+<h6>Attribute Values</h6>
+
+<div>
+    <br>
+    <p>Select the attribute type of which you want to manage the attribute values</p>
+    <select class="selectpicker submit-box-generic submit-input-narrow" 
+        ng-model="submit.status.selectedAttributeType">
+        <option 
+            ng-repeat="(aType, value) in submit.ProductMeta.attributes" 
+            value="{{aType}}">
+            {{aType}}
+        </option>
+    </select>
+</div>
+
+
+<div ng-show="submit.status.selectedAttributeType">
+    
+    <div ng-show="submit.ProductMeta.attributes[submit.status.selectedAttributeType]">
+        <br>
+        <p>Active attribute values <span>for {{submit.status.selectedAttributeType}}</span></p>
+        <p ng-repeat="(aValue, value) in submit.ProductMeta.attributes[submit.status.selectedAttributeType]">
+            &#10687;&nbsp; {{aValue}}&nbsp;&nbsp; 
+            <a href="" ng-click="submit.deleteAttributeValue(submit.status.selectedAttributeType, aValue)">
+                x Delete
+            </a>
+        </p>
+        
+    </div>
+    
+    <br>
+    <p>+ Add an attribute value for <span>for {{submit.status.selectedAttributeType}}</span></p>
+    <input
+        class="submit-box-generic submit-input-narrow" type="text" placeholder="Value"
+        ng-model="submit.status.newAttributeValue">
+    <button class="btn btn-positive-outline" ng-click="submit.addAttributeValue()">
+        Add
+    </button>
+    
+</div>

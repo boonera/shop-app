@@ -1,0 +1,12 @@
+<div class="padding center">
+  <button class="button button-positive icon-left ion-ios-plus-empty" ng-click="addImage()">
+    Add an image
+  </button>
+</div>
+
+<div class="image-stack center" ng-repeat="(key, image) in ProductImages">
+  <img ng-src="{{image}}">
+  <br>
+  <a href="" ng-click="removeScreenshot(key)">Remove</a>
+</div>
+

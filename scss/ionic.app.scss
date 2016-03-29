@@ -77,6 +77,13 @@ $balanced:                        #33cd5f !default;
     margin-top: 20px;
 }
 
+.slider-pager-page {
+  color: #fff !important;
+}
+.slider-pager-page.active {
+  color: $positive !important;
+}
+
 // Product
 // -------------------------------
 .product.slidebox {
@@ -91,10 +98,14 @@ $balanced:                        #33cd5f !default;
     height: auto;
     max-height: 90vh;
     max-width: 100vw;
+    min-height: 400px;
 }
 .product.small img {
     max-height: 40vh;
     max-width: 100vw;
+    min-height: 200px;
+    width: auto;
+    height: auto;
 }
 .product.extend-icon {
     position: absolute;
@@ -364,6 +375,17 @@ hr {
     font-size: 12px !important;
 }
 
+// Image Stack Modal
+// -------------------------------
+.image-stack {
+    border-top: 1px solid $positive !important;
+    border-bottom: 1px solid $positive;
+    padding: 15px;
+}
+.image-stack img {
+    max-width: 90vw;
+    height: auto;
+}
 
 // Decorators and Others
 // -------------------------------

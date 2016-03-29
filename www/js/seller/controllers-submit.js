@@ -1,8 +1,8 @@
 angular.module('starter.controllers-submit', [])
 
 .controller('SubmitCtrl', function(
-  $scope, $state, $timeout, $stateParams,
-    Auth, Products, Utils, Categories) {
+  $scope, $state, $timeout, $stateParams, $ionicActionSheet, $ionicModal, $ionicPopup,
+    Auth, Products, Utils, Codes, Categories, CordovaCamera) {
       
       // controller variables
     var currentProductId = null;   
@@ -269,34 +269,72 @@ angular.module('starter.controllers-submit', [])
         
     };
     
-
     
     /**
-     * 
-     * Base 64 File Upload
-     * *** Redo to one function
-     * 
+     * Add images using CordovaCamera
      */
+    
+    $ionicModal.fromTemplateUrl('modal-images.html', {
+        scope: $scope,
+        animation: 'slide-in-up'
+    }).then(function(modal) {
+        $scope.modalImages = modal;
+    });
+    
+    $scope.openModalImages = function() {
+        $scope.modalImages.show();
+    };
+    
+    $scope.closeModalImages = function() {
+        $scope.modalImages.hide();
+    };
+    
+    
     $scope.dimensions = {
         screenshot: {
             w: 400,
             h: 400
         }
     };
-
     
-    // screenshots
     var ProductImagesArray = [];
-    $scope.onLoad9 = function (e, reader, file, fileList, fileOjects, fileObj) {
-        Utils.resizeImage("canvas9", fileObj.base64, $scope.dimensions["screenshot"].w, $scope.dimensions["screenshot"].h).then(
-            function(resizedBase64){
-                ProductImagesArray.push(resizedBase64);
-                transformArrayToScreenshot();
-            }, function(error){
-                //console.log(error)
+    $scope.addImage = function() {
+        // Show the action sheet
+        $ionicActionSheet.show({
+            buttons: [
+                { text: 'Take a new picture' },
+                { text: 'Import from phone library' },
+                { text: '** Test image' },
+            ],
+            titleText: 'Import image',
+            cancelText: 'Cancel',
+            cancel: function() {
+                // add cancel code..
+            },
+            buttonClicked: function(sourceTypeIndex) {
+              proceed(sourceTypeIndex)
+              return true;
+            },
+            destructiveButtonClicked: function() {
+              $scope.removeImage();
+              return true;
             }
-        )
+        });
+        function proceed(sourceTypeIndex) {
+          CordovaCamera.newImageTest(sourceTypeIndex, $scope.dimensions.screenshot.w).then(
+            function(imageData64){
+                // --> process
+                ProductImagesArray.push(imageData64);
+                transformArrayToScreenshot();
+            },
+            function(error){
+              Codes.handleError(error);
+            }
+          )
+          
+        };
     };
+    
     
     $scope.removeScreenshot = function(key){
         var index = key.match(/\d+/)[0];
@@ -306,21 +344,27 @@ angular.module('starter.controllers-submit', [])
         transformArrayToScreenshot();
     };
     
+    
     // takes ProductImagesArray and sets in ProductsImages  
     function transformArrayToScreenshot() {
       $scope.ProductImages = {};
+      $scope.status['nbImages'] = 0;
       for (var i = 0; i<ProductImagesArray.length; i++) {
           var iter = i+1;
           $scope.ProductImages['screenshot' + iter] = ProductImagesArray[i];
+          $scope.status['nbImages'] = $scope.status['nbImages'] + 1;
+          console.log($scope.status['nbImages'])
       }
     };
     
     function initProductArray() {
         var iter = 0;
+        $scope.status['nbImages'] = 0;
         angular.forEach($scope.ProductImages, function(value, key){
             if(key != 'icon') {
                 ProductImagesArray[iter] = value;
                 iter = iter+1; 
+                $scope.status['nbImages'] = $scope.status['nbImages'] + 1;
             }
         })
     };
@@ -333,37 +377,134 @@ angular.module('starter.controllers-submit', [])
         initProductArray();
         $scope.status['loadingScreenshots'] = false;
     };
+
+
+    
+    
+    /**
+     * 
+     * Base 64 File Upload
+     * *** Redo to one function
+     * 
+     */
+    
+
+    
+    // screenshots
+    // ** depreciated
+    $scope.onLoad9 = function (e, reader, file, fileList, fileOjects, fileObj) {
+        Utils.resizeImage("canvas9", fileObj.base64, $scope.dimensions["screenshot"].w, $scope.dimensions["screenshot"].h).then(
+            function(resizedBase64){
+                ProductImagesArray.push(resizedBase64);
+                transformArrayToScreenshot();
+            }, function(error){
+                //console.log(error)
+            }
+        )
+    };
+    
+    
+    
+    
     
     
     // -------------------------------------------------------------------------
     // Attributes
+    
+    $ionicModal.fromTemplateUrl('modal-attributes.html', {
+        scope: $scope,
+        animation: 'slide-in-up'
+    }).then(function(modal) {
+        $scope.modalAttributes = modal;
+    });
+    
+    $scope.openModalAttributes = function() {
+        $scope.modalAttributes.show();
+    };
+    
+    $scope.closeModalAttributes = function() {
+        $scope.modalAttributes.hide();
+    };
+    
+    
     $scope.addAttributeType = function() {
-        var aType = $scope.status.newAttributeType;
-        console.log('adding type', aType)
+        $scope.data = {};
+        // An elaborate, custom popup
+        var myPopup = $ionicPopup.show({
+            template: '<input type="text" ng-model="data.newAttributeType">',
+            title: 'Add an attribute type',
+            //subTitle: 'Please use normal things',
+            scope: $scope,
+            buttons: [
+              { text: 'Cancel' },
+              {
+                text: '<b>Add</b>',
+                type: 'button-positive',
+                onTap: function(e) {
+                  if (!$scope.data.newAttributeType) {
+                    e.preventDefault();
+                  } else {
+                      addAttributeType($scope.data.newAttributeType);
+                    return $scope.data.newAttributeType;
+                  }
+                }
+              }
+            ]
+        });
+    };
+    
+    //
+    function addAttributeType(aType) {
+        console.log(aType)
         if(aType) {
             if($scope.ProductMeta.hasOwnProperty('attributes')){
                 $scope.ProductMeta['attributes'][aType] = {}
             } else {
                 var tempObj = {};
-                tempObj[$scope.status.newAttributeType] = {};
+                tempObj[aType] = {};
                 $scope.ProductMeta['attributes'] = tempObj;
             }
         }
         console.log($scope.ProductMeta['attributes'])
     };
+    
     $scope.deleteAttributeType = function(aType) {
         delete $scope.ProductMeta['attributes'][aType]
     };
     
-    $scope.addAttributeValue = function() {
-        var aValue = $scope.status.newAttributeValue;
-        var aType = $scope.status.selectedAttributeType;
-        console.log('adding value', aValue, aType)
+    
+    //
+    $scope.addAttributeValue = function(aType) {
+        $scope.data = {};
+        // An elaborate, custom popup
+        var myPopup = $ionicPopup.show({
+            template: '<input type="text" ng-model="data.newAttributeValue">',
+            title: 'Add an attribute value for ' + aType,
+            //subTitle: 'Please use normal things',
+            scope: $scope,
+            buttons: [
+              { text: 'Cancel' },
+              {
+                text: '<b>Add</b>',
+                type: 'button-positive',
+                onTap: function(e) {
+                  if (!$scope.data.newAttributeValue) {
+                    e.preventDefault();
+                  } else {
+                      addAttributeValue(aType, $scope.data.newAttributeValue);
+                    return $scope.data.newAttributeValue;
+                  }
+                }
+              }
+            ]
+        });
+    };
+    
+    function addAttributeValue(aType, aValue) {
         if(aValue && aType) {
             $scope.ProductMeta['attributes'][aType][aValue] = true;
         };
     };
-    
     $scope.deleteAttributeValue = function(aType, aValue) {
         delete $scope.ProductMeta['attributes'][aType][aValue];
     };
@@ -386,6 +527,10 @@ angular.module('starter.controllers-submit', [])
     
     $scope.goTo = function(nextState) {
         $state.go(nextState);
+    };
+    
+    $scope.editImages = function() {
+      $state.go('app.submit-images')  
     };
     
     // -------------------------------------------------------------------------

@@ -46,3 +46,22 @@ angular.module('starter.directives-templates', [])
     templateUrl: 'templates/directives/rating-stars-select.html'
   };
 })
+
+
+.directive('modalImages', function() {
+  return {
+    templateUrl: 'templates/seller/modal-images.html'
+  };
+})
+
+.directive('modalAttributes', function() {
+  return {
+    templateUrl: 'templates/seller/modal-attributes.html'
+  };
+})
+
+.directive('attributeSettings', function() {
+  return {
+    templateUrl: 'templates/seller/attribute-settings.html'
+  };
+})

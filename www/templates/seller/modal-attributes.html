@@ -1,0 +1,44 @@
+<div class="padding">
+  <p>Use this form to manage product options. For instance, if you are selling a T-shirt you might offer the product in 
+  different colors or sizes (Attribute Types). We call these options Attribute Values, e.g. color Yellow or size Green. </p>
+  <p>
+    Hint: Swipe left to open more options
+  </p>
+</div>
+
+<div class="padding center">
+  <button class="button button-positive icon-left ion-ios-plus-empty" ng-click="addAttributeType()">
+    Add an Attribute Type
+  </button>
+</div>
+
+<br>
+
+
+<!-- iterate over aTypes -->
+<ion-list>
+  <div ng-repeat="(aType, value) in ProductMeta.attributes">
+    
+    
+    <!-- divider v2 -->
+    <ion-item class="item item-divider item-icon-right" ng-click="addAttributeValue(aType)">
+      {{aType}}
+      <i class="icon ion-ios-plus-empty"></i>
+      <ion-option-button class="button-assertive" ng-click="deleteAttributeType(aType)">Delete</ion-option-button>
+      <ion-option-button class="button-positive" ng-click="addAttributeValue(aType)">Add value</ion-option-button>
+    </ion-item>
+
+    
+    <!-- iterate over aValues -->
+    <ion-item class="item item-icon-right" ng-repeat="(aValue, value) in ProductMeta.attributes[aType]" ng-click="deleteAttributeValue(aType, aValue)">
+       {{aValue}}
+       <i class="icon ion-ios-minus-empty"></i>
+       <ion-option-button class="button-assertive" ng-click="deleteAttributeValue(aType, aValue)">Delete</ion-option-button>
+    </ion-item>
+  
+  
+  </div>
+</ion-list>
+  
+
+

@@ -69,11 +69,11 @@
           placeholder="Optional"></textarea>
       </ion-item>
       
-      <ion-item class="item-divider">
+      <ion-item class="item-divider" >
         Attributes
       </ion-item>
       
-      <ion-item>
+      <ion-item ng-click="openModalAttributes()">
         Edit attributes
       </ion-item>
       
@@ -81,8 +81,11 @@
         Images
       </ion-item>
       
-      <ion-item>
+      <ion-item ng-click="openModalImages()">
         Edit images
+        <span class="item-note">
+          {{status.nbImages || 0}}
+        </span>
       </ion-item>
       
       <ion-item class="item-divider">
@@ -138,6 +141,33 @@
 </ion-view>
 
 
+<script id="modal-images.html" type="text/ng-template">
+  <ion-modal-view>
+    <ion-header-bar>
+      <h1 class="title">Manage Images</h1>
+      <div class="buttons">
+        <button class="button button-positive" ng-click="closeModalImages()">Done</button>
+      </div>
+    </ion-header-bar>
+    <ion-content>
+      <modal-images></modal-images>
+    </ion-content>
+  </ion-modal-view>
+</script>
+
+<script id="modal-attributes.html" type="text/ng-template">
+  <ion-modal-view>
+    <ion-header-bar>
+      <h1 class="title">Manage Attributes</h1>
+      <div class="buttons">
+        <button class="button button-positive" ng-click="closeModalAttributes()">Done</button>
+      </div>
+    </ion-header-bar>
+    <ion-content>
+      <modal-attributes></modal-attributes>
+    </ion-content>
+  </ion-modal-view>
+</script>
 
 <canvas id="canvas0" style="display: none !important;"></canvas>
 <canvas id="canvas1" style="display: none !important;"></canvas>
