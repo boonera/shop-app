@@ -16,15 +16,18 @@ angular.module('starter.controllers-submit', [])
         loadingScreenshots: true,
         loadingCategories: true,
     };
-    $scope.AuthData         = Auth.AuthData;
-    $scope.Categories       = Categories;
-    $scope.ProductMeta      = {};
-    $scope.ProductImages    = {};
-    $scope.ErrorMessages    = {};
-    $scope.IndexData        = {};
+    
     
     
     $scope.$on('$ionicView.enter', function(e) {
+        
+        $scope.AuthData         = Auth.AuthData;
+        $scope.Categories       = Categories;
+        $scope.ProductMeta      = {};
+        $scope.ProductImages    = {};
+        $scope.ErrorMessages    = {};
+        $scope.IndexData        = {};
+    
         currentProductId = $stateParams.productId;
         redirectView();
         loadCategories();

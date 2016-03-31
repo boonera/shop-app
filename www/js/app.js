@@ -40,8 +40,13 @@ var LIMITVALUE_LATEST           = 4; // show only the X latest given the sortMet
 
 var STRIPE_URL_CHARGE               = SERVER_SIDE_URL + "/charge";
 var STRIPE_URL_CHARGE_NODESTINATION = SERVER_SIDE_URL + "/charge/nodestination";
+var STRIPE_URL_CHARGE_SPLIT         = SERVER_SIDE_URL + "/charge/split";
 var STRIPE_FIREBASE_GEN_TOKEN       = SERVER_SIDE_URL + "/firebase/generatetoken";
 var STRIPE_URL_AUTHORIZE            = SERVER_SIDE_URL + "/authorize";
+var STRIPE_CREATE_CUSTOMER          = SERVER_SIDE_URL + "/savecustomer";
+var STRIPE_CREATE_TOKEN             = SERVER_SIDE_URL + "/createtoken";
+
+var STRIPE_OWNER_ACCOUNT_ID         = 'acct_16bvtBHW84OuTX9V';
 
 // angular.module is a global place for creating, registering and retrieving Angular modules
 // 'starter' is the name of this angular module example (also set in a <body> attribute in index.html)

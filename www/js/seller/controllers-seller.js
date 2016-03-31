@@ -4,12 +4,17 @@ angular.module('starter.controllers-seller', [])
   $scope, $state, Auth, Products, Utils) {
     
     
-    $scope.AuthData          = Auth.AuthData;
+    
     $scope.status = {
         loading: true,
     };
     
     $scope.$on('$ionicView.enter', function(e) {
+        
+        $scope.AuthData          = Auth.AuthData;
+        $scope.ProductsMeta      = {};
+        $scope.ProductsIcons     = {};
+    
         loadLatestItems();
     });
     
@@ -20,8 +25,7 @@ angular.module('starter.controllers-seller', [])
     // -------------------------------------------------------------------------
     // -------------------------------------------------------------------------
     
-    $scope.ProductsMeta      = {};
-    $scope.ProductsIcons     = {};
+    
     
     function loadLatestItems() {
         $scope.ProductsMeta = {};
