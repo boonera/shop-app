@@ -2,7 +2,7 @@ angular.module('starter.controllers-connect', [])
 
 .controller('ConnectCtrl', function(
   $scope, $state,
-  Auth, Profile, Codes, Utils, StripeCharge) {
+  Auth, StripeCharge) {
 
   // communicates with the DOM
   $scope.status = {

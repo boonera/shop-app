@@ -30,7 +30,7 @@ angular.module('starter.controllers-orders', [])
           $scope.status['loading'] = false;
           $scope.$broadcast('scroll.refreshComplete');
 
-          if($scope.OrdersDataArray == null) {
+          if($scope.OrdersDataArray == null || $scope.OrdersDataArray.length <= 0) {
             $scope.status['loading'] = null;
           }
         },

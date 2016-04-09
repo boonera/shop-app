@@ -171,6 +171,7 @@ angular.module('starter.controllers-checkout', [])
   $scope.finishCheckOut = function() {
     $ionicHistory.nextViewOptions({disableBack: true});
     $state.go('app.orders');
+    $scope.status['mode'] = $scope.modes[0];
   };
   
   $scope.goTo = function(nextState) {
