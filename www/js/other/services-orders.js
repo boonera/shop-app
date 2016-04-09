@@ -58,19 +58,22 @@ angular.module('starter.services-orders', [])
     return qUpdate.promise;
   };
   
-  self.prepareOrderData = function(Cart, StripeInvoiceData) {
+  self.prepareOrderData = function(productId, Cart, StripeInvoiceData) {
     // remove screenshot or other images (optional)
     var CachedMetaAdj = Cart.CachedMeta;
+    console.log("**prepareOrderData**", CachedMetaAdj)
+    
     if(CachedMetaAdj.hasOwnProperty('screenshot1')){delete CachedMetaAdj['screenshot1']};
-    // prepare
+    
     var OrderData = {
-      StripeInvoiceData: StripeInvoiceData,
-      paymentId: StripeInvoiceData.balance_transaction,
-      timestamp: Firebase.ServerValue.TIMESTAMP,
-      CachedTotal: Cart.CachedTotal,
-      CachedMeta: CachedMetaAdj,
-      CachedList: Cart.CachedList,
+      StripeInvoiceData: StripeInvoiceData[productId],
+      paymentId:    StripeInvoiceData[productId]['balance_transaction'],
+      timestamp:    Firebase.ServerValue.TIMESTAMP,
+      CachedTotal:  Cart.CachedTotal[productId],
+      CachedMeta:   CachedMetaAdj[productId],
+      CachedList:   Cart.CachedList[productId],
     };
+    
     return OrderData;
   };
 

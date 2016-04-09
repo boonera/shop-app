@@ -30,7 +30,6 @@
       
       <div 
         ng-repeat="(categoryId, categoryObj) in Categories" 
-        ng-init="loadProducts(categoryId)" 
         ng-show="status.loading[categoryId] != null">
         
         <label class="item item-divider" ng-click="goToCategory(categoryId)">

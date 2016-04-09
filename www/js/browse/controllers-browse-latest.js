@@ -41,6 +41,10 @@ angular.module('starter.controllers-browse-latest', [])
             // --> iteratively load latest productmeta from DOM
             $scope.status['initLoading'] = false;
             $scope.$broadcast('scroll.refreshComplete');
+            
+            // reload products
+            reloadProducts();
+            
         },
         function(error){
             console.log(error);
@@ -49,7 +53,7 @@ angular.module('starter.controllers-browse-latest', [])
   };
   
   // get the latest
-  $scope.loadProducts = function(categoryId) {
+  function loadProducts(categoryId) {
     $scope.status['loading'][categoryId] = true;
     Products.filter('categoryId', categoryId, $scope.status.sortProperty, LIMITVALUE_LATEST).then(
         function(ProductsMeta){
@@ -73,7 +77,7 @@ angular.module('starter.controllers-browse-latest', [])
   function reloadProducts() {
     angular.forEach($scope.Categories, function(value, categoryId){
       //console.log('reloading', categoryId)
-      $scope.loadProducts(categoryId);
+      loadProducts(categoryId);
     })  
   };
   

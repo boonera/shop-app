@@ -106,6 +106,8 @@ angular.module('starter.services-profile', [])
   // SET        usernames/$username (new)         proceed2b
   self.changeUserName = function(uid, newUsername) {
     
+    // remove the unwanted characters etc from the string
+    newUsername = Utils.alphaNumeric(newUsername);
     console.log(uid, newUsername)
     
     // 0    validate if username taken

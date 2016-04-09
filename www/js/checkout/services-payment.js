@@ -2,12 +2,7 @@ angular.module('starter.services-payment', [])
 
 /**
  * Factory that handles the Checkout process, consisting of the following steps:
- * 1. Retrieve the stripeToken using Stripe Checkout
- * 2. Charge the user through STRIPE_URL_CHARGE
- * 3a. Register the order
- * 3b. Register the invoice
- * 3c_1. Register the purchase
- * 3c_2. Update the IndexManager (new sale)
+ * ...
  */
 .factory('PaymentManager', function($q, OrdersManager, StripeCharge, Settings_Fees, Indexing) {
 
@@ -17,13 +12,14 @@ angular.module('starter.services-payment', [])
     var qPay = $q.defer();
     var SaleObj = {}; // keeps track of the status
 
-    // Main wrapper used throughout the form to handle the payment details
-    // In StripeCharge used for the handlerOptions
+    // Main wrapper used throughout the form to handle the payment
+    // & Static Data
     var headerData = {
       name:             "Payment",
       description:      COMPANY_NAME,
       amount:           Math.floor(Cart.CachedTotal.total_value_incl*100),  // charge handles transactions in cents
       image:            "img/ionic.png", // your company logo
+      buyerId:          AuthData.uid
     };
     
     // init
@@ -35,17 +31,25 @@ angular.module('starter.services-payment', [])
     
     
     /**
-    * [0] get the destination account id's
+    * [0] Get the destination account id's
     *     i.e. who is going to receive the money?
+    *     The SCDatas is an object with as keys the product ids
+    *     
+    *   SCDatas: {
+          $productId: {
+            stripe_user_id: "abc"
+          },
+          ...
+        }
     */
     
     function getDestinationAccountIds() {
       getDestinationAccountIds_fn(Cart).then(
       function(SCDatas){
         
-          // filter
+          // filter out empty destinatin account ids
+          // replace with an account that is connected to the stripe
           SCDatas = filterEmptyDestAccountIds_fn(SCDatas);
-          console.log('getDestinationAccountIds/success', SCDatas);
           
           // -->
           getStripeToken(SCDatas);
@@ -58,7 +62,8 @@ angular.module('starter.services-payment', [])
     
 
     /**
-    * [1] first get the Stripe token
+    * [1] Get the stripe token using the stripe checkout module
+    *     This is used to create a custom of the buyer who is purchasing the Cart
     */
     function getStripeToken(SCDatas) {
       updateStatus('Initializing payment');
@@ -66,7 +71,6 @@ angular.module('starter.services-payment', [])
         function(stripeToken){
           //
           // -->
-          console.log("TOKEN ---------- GETSTRIPE -----------", stripeToken);
           createCustomer(SCDatas, stripeToken);
         },
         function(error){
@@ -77,7 +81,8 @@ angular.module('starter.services-payment', [])
     
     
     /**
-    * [2] create customers
+    * [2] Create a customer of the buyer using the stripeToken
+    *     Needed to split the charge in the future
     */
     function createCustomer(SCDatas, stripeToken) {
       StripeCharge.createCustomers(stripeToken).then(
@@ -94,7 +99,16 @@ angular.module('starter.services-payment', [])
     
     
     /**
-    * [3] create tokens
+    * [3] Create the tokens for charging the buyer
+    *     For each productId
+      
+      TokenData: {
+        $productId: {
+          tokenData
+        },
+        ...
+      }
+      
     */
     function createTokens(SCDatas, customerObj) {
       createTokens_fn(SCDatas, customerObj).then(
@@ -111,12 +125,10 @@ angular.module('starter.services-payment', [])
     };
     
     
-    // fn create tokens
-    // ** issue: destination account id not same for charge and create token
+    // fn [3] create tokens
     function createTokens_fn(SCDatas, customerObj) {
       var promises = {};
       angular.forEach(SCDatas, function(value, productId){
-        
         
         var stripeCustomerId          = customerObj['id'];
         var stripeConnectedAccountId  = value['stripe_user_id'];
@@ -131,23 +143,30 @@ angular.module('starter.services-payment', [])
 
 
     /**
-    * [4] then charge using your node-server-api
+    * [4] The charge the buyer multiple times for each $productId
+    * 
+      StripeInvoiceData: {
+        $productId: {
+          ...
+        }
+      }
+        
     */
     function proceedCharge(SCDatas, TokenData) {
 
       // send update
       updateStatus('Processing your payment...');
       proceedCharges_fn(SCDatas, TokenData).then(
-        function(success){
-          
-          // ...
-          console.log("REGISTRATION/success", success)
-          registerPayment(success)
+        function(StripeInvoiceData){
+          //
+          // -->
+          registerPayment(StripeInvoiceData)
         },
         function(error){
           
           // ...
-          console.log("REGISTRATION/error", error)
+          console.log("REGISTRATION/error", error);
+          handleError(error);
         }
       );
       
@@ -155,34 +174,37 @@ angular.module('starter.services-payment', [])
     }; // ./ proceedCharge
     
     
-    // fn [4]
+    // fn [4a]
     function proceedCharges_fn(SCDatas, TokenData) {
       var promises = {};
       angular.forEach(SCDatas, function(value, productId){
         if(value != null) {
           
-          //
-          var stripeConnectedAccountId = value['stripe_user_id'];
-          var stripeGeneratedToken = TokenData[productId].id;
+          // define the dynamic account id and token
+          var stripeConnectedAccountId  = SCDatas[productId]['stripe_user_id'];
+          var stripeGeneratedToken      = TokenData[productId]['id'];
           
-          console.log("TOKEN ---------- CHARGE -----------", stripeGeneratedToken)
+          // extend the header data object with dynamic values (for each productId)
+          var headerDataSplit                 = headerData;
+          headerDataSplit['amount']           = Number(getProductPrice(productId));
+          headerDataSplit['applicationFee']   = Number(calculateApplicationFee(productId));
+          headerDataSplit['productId']        = productId;
           
-          var headerDataSplit = headerData;
-          headerDataSplit['amount'] = 100;
-          headerDataSplit['buyerId']    = AuthData.uid;
-          headerDataSplit['productId']  = productId;
+          console.log("**CHARGING SPLIT**", headerDataSplit);
           
+          // <-- charge
           var promise = charge_fn(stripeConnectedAccountId, stripeGeneratedToken, headerDataSplit);
+          promises[productId] = promise;
         };
-        promises[productId] = promise;
       })
       return $q.all(promises);
     };
     
+    
+    // fn [4b]
     function charge_fn(stripeConnectedAccountId, stripeGeneratedToken, headerDataAdj) {
       var qCharge = $q.defer();
-      //
-      StripeCharge.chargeUser_split(stripeConnectedAccountId, stripeGeneratedToken, headerDataAdj).then(
+      StripeCharge.chargeUser(stripeConnectedAccountId, stripeGeneratedToken, headerDataAdj).then(
         function(StripeInvoiceData){
           //
           // -->
@@ -199,6 +221,34 @@ angular.module('starter.services-payment', [])
       );
       return qCharge.promise;
     };
+    
+    // returns the product price of the item in cents
+    // takes into account the buyer fees
+    function getProductPrice(productId) {
+      
+      var CachedTotal   = Cart.CachedTotal[productId];
+      var priceNominal  = CachedTotal.price;
+      
+      var totalFees = 0;
+      if(Cart.CachedTotal.hasOwnProperty('fees')) {
+        angular.forEach(Cart.CachedTotal.fees, function(feeObj, feeId){
+          var perc = feeObj.perc;
+          var subFee = priceNominal * (perc/100);
+          totalFees = totalFees + subFee;
+        })
+      };
+      
+      var totalPrice = ((priceNominal + totalFees)*100).toFixed(0);
+      return Number(totalPrice); // amount in cents
+    };
+    
+    // calculates the seller fees in cents
+    function calculateApplicationFee(productId) {
+      var CachedTotal   = Cart.CachedTotal[productId];
+      var totalAppFee   = (CachedTotal.price*APPLICATION_FEE_PERC*100).toFixed(0);
+      return Number(totalAppFee);
+    };
+      
 
 
     /**
@@ -206,7 +256,7 @@ angular.module('starter.services-payment', [])
     */
     function registerPayment(StripeInvoiceData) {
 
-      // ** send update
+      // send update
       updateStatus('Registering the order...');
 
       // prepare the PATH_DATA
@@ -229,31 +279,35 @@ angular.module('starter.services-payment', [])
       ref.update(PATH_DATA, onComplete);
 
     }; // ./ registerPayment
-
+  
+  
+    // fn [5]
     function createPATH_DATA(StripeInvoiceData) {
       var PATH_DATA = {};
-
-      // -----------------------------------------------------------------------
-      // 3A: Orders
-      var OrderData = OrdersManager.prepareOrderData(Cart, StripeInvoiceData);
-      var orderId = OrdersManager.generateOrderId();
-      PATH_DATA["/orders/" + AuthData.uid + "/" + orderId] = OrderData;
-
-      // -----------------------------------------------------------------------
-      // 3B: Invoices
+      
+      console.log(Cart.all)
+      
+      // Store it under one orderId
+      var orderId   = OrdersManager.generateOrderId();
+      
+      // Invoices
       PATH_DATA["/invoices/" + AuthData.uid + "/" + orderId] = StripeInvoiceData;
 
-      // -----------------------------------------------------------------------
-      // 3C_1 and 3C_2: Purchases and Update Index Manager
-      angular.forEach(OrderData.CachedMeta, function(productObj, productId){
+      // Purchases, Orders and Update Index Manager
+      angular.forEach(Cart.CachedMeta, function(productObj, productId){
+        
+        console.log('purchased product', productId, productObj.value.price)
+        
+        // register the order
+        var OrderData = OrdersManager.prepareOrderData(productId, Cart, StripeInvoiceData);
+        PATH_DATA["/orders/" + AuthData.uid + "/" + orderId + "/" + productId] = OrderData;
 
-        // 3C_1
+        // register purchase so buyer can comment/rate products
         PATH_DATA["/purchases/" + productId + "/" + AuthData.uid] = true;
 
-        // 3C_2
+        // update sales new
         Indexing.updateDynamicIndex(productId, 'sales_new', {sales_value_new: productObj.value.price})
 
-        console.log('purchased product', productId, productObj.value.price)
       })
 
       return {
@@ -325,7 +379,8 @@ angular.module('starter.services-payment', [])
     angular.forEach(SCDatas, function(value, productId){
       if(value == null || value == undefined) {
         SCDatas_Adj[productId] = {
-          stripe_user_id: "acct_16xvMrLmhDAkZb3z"
+          replaced: true,
+          stripe_user_id: STRIPE_OWNER_ACCOUNT_ID
         };
       }
     })
@@ -348,47 +403,14 @@ angular.module('starter.services-payment', [])
    * retrieve the price from the back-end (thus the server-side). In this way the client
    * cannot write his own application and choose a price that he/she prefers
    */
-  self.chargeUser = function(stripeToken, headerData) {
-    var qCharge = $q.defer();
 
-    // prepare the parameters/variables used on the server to process the charge
-    prepareCurlData(stripeToken, headerData).then(
-      function(curlData){
-        // -->
-        proceed(curlData);
-      },
-      function(error){
-        qCharge.reject(error);
-      }
-    );
-
-    // proceed -->
-    // we use a simple HTTP post to send the curlData to the server and process
-    // the charge
-    function proceed(curlData) {
-      $http.post(STRIPE_URL_CHARGE, curlData)
-      .success(
-        function(StripeInvoiceData){
-          qCharge.resolve(StripeInvoiceData);
-        }
-      )
-      .error(
-        function(error){
-          console.log(error)
-          qCharge.reject(error);
-        }
-      );
-    };
-
-    return qCharge.promise;
-  };
   
   /**
    * Charge a part of the amount to the individual account
    */
-  self.chargeUser_split = function(stripeConnectedAccountId, stripeGeneratedToken, headerDataSplit) {
+  self.chargeUser = function(stripeConnectedAccountId, stripeGeneratedToken, headerDataSplit) {
     var qCharge = $q.defer();
-
+    
     // prepare the parameters/variables used on the server to process the charge
     prepareCurlData_split(stripeConnectedAccountId, stripeGeneratedToken, headerDataSplit).then(
       function(curlData){
@@ -399,12 +421,29 @@ angular.module('starter.services-payment', [])
         qCharge.reject(error);
       }
     );
-
     // proceed -->
     // we use a simple HTTP post to send the curlData to the server and process
     // the charge
     function proceed(curlData) {
-      $http.post(STRIPE_URL_CHARGE_SPLIT, curlData)
+      
+      // stripeConnectedAccountId == STRIPE_OWNER_ACCOUNT_ID
+      // This holds true when:
+      // - the seller is the owner
+      // - the seller has not setup Stripe Connect
+      // stripeConnectedAccountId =/= STRIPE_OWNER_ACCOUNT_ID
+      // This holds truen when:
+      // - the seller is not the owner
+      // - the seller has setup Stripe Connect
+      var stripe_url;
+      if(stripeConnectedAccountId == STRIPE_OWNER_ACCOUNT_ID) {
+        console.log('CHARGE/NODESTINATION/', headerDataSplit.productId)
+        stripe_url = STRIPE_URL_CHARGE_NODESTINATION;
+      } else {
+        console.log('CHARGE/', headerDataSplit.productId)
+        stripe_url = STRIPE_URL_CHARGE;
+      };
+      
+      $http.post(stripe_url, curlData)
       .success(
         function(StripeInvoiceData){
           qCharge.resolve(StripeInvoiceData);
@@ -422,37 +461,19 @@ angular.module('starter.services-payment', [])
   };
 
   // fn prepare
-  function prepareCurlData(stripeToken, headerData) {
-    var qPrepare = $q.defer();
-
-    // init
-    var curlData = {
-      stripeCurrency:         "usd",
-      stripeAmount:           headerData.amount,
-      stripeSource:           stripeToken,
-      stripeDescription:      COMPANY_NAME + ":purchase:" + headerData.productId + ":" + headerData.name,
-    };
-
-    // optionally, retrieve other details async here (such as profiledata of user)
-    // in this exercise it has been left out
-    qPrepare.resolve(curlData);
-    return qPrepare.promise;
-  };
-  
-  
-  // fn prepare
   function prepareCurlData_split(stripeConnectedAccountId, stripeGeneratedToken, headerDataSplit) {
     var qPrepare = $q.defer();
 
     // init
     var curlData = {
-      stripeDestinationAccountId: stripeConnectedAccountId,
+      stripeConnectedAccountId:   stripeConnectedAccountId,
       stripeSource:               stripeGeneratedToken,
       stripeCurrency:             "usd",
       stripeAmount:               headerDataSplit.amount,
-      stripeDescription:          COMPANY_NAME + ":purchase:" + headerDataSplit.productId + ":" + headerDataSplit.name,
+      stripeDescription:          COMPANY_NAME + ",purchase," + headerDataSplit.productId + "," + headerDataSplit.name,
       stripeBuyerId:              headerDataSplit['buyerId'],
-      stripeProductId:            headerDataSplit['productId']
+      stripeProductId:            headerDataSplit['productId'],
+      applicationFee:             headerDataSplit.applicationFee,
     };
 
     // optionally, retrieve other details async here (such as profiledata of user)

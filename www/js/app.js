@@ -32,7 +32,8 @@
 var FBURL                       = 'https://boonera.firebaseio.com';  
 var SERVER_SIDE_URL             = 'https://shop-server-boonera.c9users.io';    // https://boonera.herokuapp.com // https://shop-server-boonera.c9users.io
 var STRIPE_API_PUBLISHABLE_KEY  = 'pk_test_BFpVnroY1MeVBLhd0VrtLHtj'; // pk_live_Dalb47kvY9zKHd5DvsWHXiq7 pk_test_BFpVnroY1MeVBLhd0VrtLHtj
- 
+var STRIPE_OWNER_ACCOUNT_ID     = 'acct_16bvtBHW84OuTX9V'; 
+
 // Other settings
 var COMPANY_NAME                = "Boonera";
 var LIMITVALUE                  = 100000;
@@ -46,7 +47,7 @@ var STRIPE_URL_AUTHORIZE            = SERVER_SIDE_URL + "/authorize";
 var STRIPE_CREATE_CUSTOMER          = SERVER_SIDE_URL + "/savecustomer";
 var STRIPE_CREATE_TOKEN             = SERVER_SIDE_URL + "/createtoken";
 
-var STRIPE_OWNER_ACCOUNT_ID         = 'acct_16bvtBHW84OuTX9V';
+var APPLICATION_FEE_PERC            = 0.1;  // commission for the platform owner, fee for seller
 
 // angular.module is a global place for creating, registering and retrieving Angular modules
 // 'starter' is the name of this angular module example (also set in a <body> attribute in index.html)
