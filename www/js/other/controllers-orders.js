@@ -52,27 +52,34 @@ angular.module('starter.controllers-orders', [])
 
 })
 
-.controller('OrderDetailCtrl', function($scope, $state, $stateParams, Utils, OrdersManager) {
+.controller('OrderDetailCtrl', function($scope, $state, $stateParams, $ionicHistory, Utils, OrdersManager) {
 
   $scope.status = {
     loading: true
   };
 
   $scope.$on('$ionicView.enter', function(e) {
+    console.log(OrdersManager.OrdersData)
     if($stateParams.orderId != undefined && $stateParams.orderId != null && $stateParams.orderId != "") {
       if(OrdersManager.OrdersData.hasOwnProperty($stateParams.orderId)) {
         //
-        var OrderData            = OrdersManager.OrdersData[$stateParams.orderId];
-        $scope.Cart              = OrderData
+        var OrderDataPID            = OrdersManager.OrdersData[$stateParams.orderId];
+        $scope.Cart                 = OrderDataPID.Cart;
         $scope.orderId              = $stateParams.orderId;
 
         $scope.status['loading'] = false;
 
         //
       } else {
+        $ionicHistory.nextViewOptions({
+          disableBack: true
+        });
         $state.go('app.orders');
       }
     } else {
+      $ionicHistory.nextViewOptions({
+        disableBack: true
+      });
       $state.go('app.orders');
     };
   });

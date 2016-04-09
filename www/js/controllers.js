@@ -20,7 +20,6 @@ angular.module('starter.controllers', [])
   };
   
   $scope.goToCheckout = function() {
-    console.log('goToCheckout')
     if(validateAttributes()) {
       if(Auth.AuthData.hasOwnProperty('uid')) {
         $state.go('app.checkout', {modeIter: 0});

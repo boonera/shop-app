@@ -370,6 +370,11 @@ angular.module('starter.services-utils', [])
     };
     return starsObj;
   };
+  
+  // http://stackoverflow.com/questions/25421233/javascript-removing-undefined-fields-from-an-object
+  self.removeUndefined = function(obj) {
+    return JSON.parse(JSON.stringify(obj));
+  };
 
 
   return self;

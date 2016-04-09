@@ -17,7 +17,6 @@ angular.module('starter.services-profile', [])
   // GET  users/$uid
   self.get = function(uid) {
     var childRef = "users/" + uid;
-    console.log('childRef', childRef)
     return FireFunc.onValue(childRef).then(
       function(ProfileData){
         // write to cache

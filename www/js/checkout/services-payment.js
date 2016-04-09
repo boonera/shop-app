@@ -4,7 +4,7 @@ angular.module('starter.services-payment', [])
  * Factory that handles the Checkout process, consisting of the following steps:
  * ...
  */
-.factory('PaymentManager', function($q, OrdersManager, StripeCharge, Settings_Fees, Indexing) {
+.factory('PaymentManager', function($q, OrdersManager, StripeCharge, Settings_Fees, Indexing, Utils) {
 
   var self = this;
  
@@ -14,7 +14,7 @@ angular.module('starter.services-payment', [])
 
     // Main wrapper used throughout the form to handle the payment
     // & Static Data
-    var headerData = {
+    var HeaderData = {
       name:             "Payment",
       description:      COMPANY_NAME,
       amount:           Math.floor(Cart.CachedTotal.total_value_incl*100),  // charge handles transactions in cents
@@ -67,7 +67,7 @@ angular.module('starter.services-payment', [])
     */
     function getStripeToken(SCDatas) {
       updateStatus('Initializing payment');
-      StripeCharge.getStripeToken(headerData).then(
+      StripeCharge.getStripeToken(HeaderData).then(
         function(stripeToken){
           //
           // -->
@@ -86,10 +86,10 @@ angular.module('starter.services-payment', [])
     */
     function createCustomer(SCDatas, stripeToken) {
       StripeCharge.createCustomers(stripeToken).then(
-        function(customerObj){
+        function(CustomerObj){
           //
           // -->
-          createTokens(SCDatas, customerObj);
+          createTokens(SCDatas, CustomerObj);
         },
         function(error){
           handleError(error);
@@ -110,12 +110,11 @@ angular.module('starter.services-payment', [])
       }
       
     */
-    function createTokens(SCDatas, customerObj) {
-      createTokens_fn(SCDatas, customerObj).then(
+    function createTokens(SCDatas, CustomerObj) {
+      createTokens_fn(SCDatas, CustomerObj).then(
         function(TokenData){
           // -->
-          proceedCharge(SCDatas, TokenData);
-          console.log("createTokens", TokenData)
+          proceedCharge(SCDatas, TokenData, CustomerObj);
         },
         function(error){
           console.log("createTokens", error)
@@ -126,14 +125,12 @@ angular.module('starter.services-payment', [])
     
     
     // fn [3] create tokens
-    function createTokens_fn(SCDatas, customerObj) {
+    function createTokens_fn(SCDatas, CustomerObj) {
       var promises = {};
       angular.forEach(SCDatas, function(value, productId){
         
-        var stripeCustomerId          = customerObj['id'];
+        var stripeCustomerId          = CustomerObj['id'];
         var stripeConnectedAccountId  = value['stripe_user_id'];
-        
-        console.log("---createTokens_fn---", stripeCustomerId, stripeConnectedAccountId);
         
         var promise = StripeCharge.createToken(stripeCustomerId, stripeConnectedAccountId);
         promises[productId] = promise;
@@ -152,11 +149,11 @@ angular.module('starter.services-payment', [])
       }
         
     */
-    function proceedCharge(SCDatas, TokenData) {
+    function proceedCharge(SCDatas, TokenData, CustomerObj) {
 
       // send update
       updateStatus('Processing your payment...');
-      proceedCharges_fn(SCDatas, TokenData).then(
+      proceedCharges_fn(SCDatas, TokenData, CustomerObj).then(
         function(StripeInvoiceData){
           //
           // -->
@@ -175,7 +172,7 @@ angular.module('starter.services-payment', [])
     
     
     // fn [4a]
-    function proceedCharges_fn(SCDatas, TokenData) {
+    function proceedCharges_fn(SCDatas, TokenData, CustomerObj) {
       var promises = {};
       angular.forEach(SCDatas, function(value, productId){
         if(value != null) {
@@ -185,15 +182,13 @@ angular.module('starter.services-payment', [])
           var stripeGeneratedToken      = TokenData[productId]['id'];
           
           // extend the header data object with dynamic values (for each productId)
-          var headerDataSplit                 = headerData;
-          headerDataSplit['amount']           = Number(getProductPrice(productId));
-          headerDataSplit['applicationFee']   = Number(calculateApplicationFee(productId));
-          headerDataSplit['productId']        = productId;
-          
-          console.log("**CHARGING SPLIT**", headerDataSplit);
+          var HeaderDataSplit                 = HeaderData;
+          HeaderDataSplit['amount']           = Number(getProductPrice(productId));
+          HeaderDataSplit['applicationFee']   = Number(calculateApplicationFee(productId));
+          HeaderDataSplit['productId']        = productId;
           
           // <-- charge
-          var promise = charge_fn(stripeConnectedAccountId, stripeGeneratedToken, headerDataSplit);
+          var promise = charge_fn(stripeConnectedAccountId, stripeGeneratedToken, HeaderDataSplit, CustomerObj);
           promises[productId] = promise;
         };
       })
@@ -202,13 +197,12 @@ angular.module('starter.services-payment', [])
     
     
     // fn [4b]
-    function charge_fn(stripeConnectedAccountId, stripeGeneratedToken, headerDataAdj) {
+    function charge_fn(stripeConnectedAccountId, stripeGeneratedToken, HeaderDataAdj, CustomerObj) {
       var qCharge = $q.defer();
-      StripeCharge.chargeUser(stripeConnectedAccountId, stripeGeneratedToken, headerDataAdj).then(
+      StripeCharge.chargeUser(stripeConnectedAccountId, stripeGeneratedToken, HeaderDataAdj, CustomerObj).then(
         function(StripeInvoiceData){
           //
           // -->
-          console.log("STATUS_CODE", StripeInvoiceData.statusCode)
           if(StripeInvoiceData.statusCode == 200 || StripeInvoiceData.statusCode == undefined) { // needs to be 200 to pass. See: https://stripe.com/docs/api
             qCharge.resolve(StripeInvoiceData);
           } else {
@@ -264,8 +258,6 @@ angular.module('starter.services-payment', [])
       var PATH_DATA = PATH_DATA_obj.data;
       var orderId   = PATH_DATA_obj.orderId;
 
-      console.log(PATH_DATA)
-
       // synchronize
       var ref = new Firebase(FBURL);
       var onComplete = function(error) {
@@ -283,37 +275,33 @@ angular.module('starter.services-payment', [])
   
     // fn [5]
     function createPATH_DATA(StripeInvoiceData) {
-      var PATH_DATA = {};
-      
-      console.log(Cart.all)
-      
-      // Store it under one orderId
-      var orderId   = OrdersManager.generateOrderId();
-      
-      // Invoices
-      PATH_DATA["/invoices/" + AuthData.uid + "/" + orderId] = StripeInvoiceData;
-
-      // Purchases, Orders and Update Index Manager
-      angular.forEach(Cart.CachedMeta, function(productObj, productId){
+        var PATH_DATA = {};
         
-        console.log('purchased product', productId, productObj.value.price)
-        
+        // Store it under one orderId
         // register the order
-        var OrderData = OrdersManager.prepareOrderData(productId, Cart, StripeInvoiceData);
-        PATH_DATA["/orders/" + AuthData.uid + "/" + orderId + "/" + productId] = OrderData;
-
-        // register purchase so buyer can comment/rate products
-        PATH_DATA["/purchases/" + productId + "/" + AuthData.uid] = true;
-
-        // update sales new
-        Indexing.updateDynamicIndex(productId, 'sales_new', {sales_value_new: productObj.value.price})
-
-      })
-
-      return {
-        data: PATH_DATA,
-        orderId: orderId
-      }
+        var orderId   = OrdersManager.generateOrderId();
+        var OrderData = OrdersManager.prepareOrderData(Cart, StripeInvoiceData);
+        PATH_DATA["/orders/" + AuthData.uid + "/" + orderId] = Utils.removeUndefined(OrderData);
+        
+        
+        // Invoices
+        PATH_DATA["/invoices/" + AuthData.uid + "/" + orderId] = Utils.removeUndefined(StripeInvoiceData);
+        
+        // Purchases, Orders and Update Index Manager
+        angular.forEach(Cart.CachedMeta, function(productObj, productId){
+        
+            // register purchase so buyer can comment/rate products
+            PATH_DATA["/purchases/" + productId + "/" + AuthData.uid] = true;
+            
+            // update sales new
+            Indexing.updateDynamicIndex(productId, 'sales_new', {sales_value_new: productObj.value.price})
+        
+        })
+        
+        return {
+            data: PATH_DATA,
+            orderId: orderId
+        }
     };
 
 
@@ -408,11 +396,11 @@ angular.module('starter.services-payment', [])
   /**
    * Charge a part of the amount to the individual account
    */
-  self.chargeUser = function(stripeConnectedAccountId, stripeGeneratedToken, headerDataSplit) {
+  self.chargeUser = function(stripeConnectedAccountId, stripeGeneratedToken, HeaderDataSplit, CustomerObj) {
     var qCharge = $q.defer();
     
     // prepare the parameters/variables used on the server to process the charge
-    prepareCurlData_split(stripeConnectedAccountId, stripeGeneratedToken, headerDataSplit).then(
+    prepareCurlData_split(stripeConnectedAccountId, stripeGeneratedToken, HeaderDataSplit, CustomerObj).then(
       function(curlData){
         // -->
         proceed(curlData);
@@ -421,29 +409,12 @@ angular.module('starter.services-payment', [])
         qCharge.reject(error);
       }
     );
+    
     // proceed -->
     // we use a simple HTTP post to send the curlData to the server and process
     // the charge
     function proceed(curlData) {
-      
-      // stripeConnectedAccountId == STRIPE_OWNER_ACCOUNT_ID
-      // This holds true when:
-      // - the seller is the owner
-      // - the seller has not setup Stripe Connect
-      // stripeConnectedAccountId =/= STRIPE_OWNER_ACCOUNT_ID
-      // This holds truen when:
-      // - the seller is not the owner
-      // - the seller has setup Stripe Connect
-      var stripe_url;
-      if(stripeConnectedAccountId == STRIPE_OWNER_ACCOUNT_ID) {
-        console.log('CHARGE/NODESTINATION/', headerDataSplit.productId)
-        stripe_url = STRIPE_URL_CHARGE_NODESTINATION;
-      } else {
-        console.log('CHARGE/', headerDataSplit.productId)
-        stripe_url = STRIPE_URL_CHARGE;
-      };
-      
-      $http.post(stripe_url, curlData)
+      $http.post(curlData['stripe_url'], curlData)
       .success(
         function(StripeInvoiceData){
           qCharge.resolve(StripeInvoiceData);
@@ -461,23 +432,43 @@ angular.module('starter.services-payment', [])
   };
 
   // fn prepare
-  function prepareCurlData_split(stripeConnectedAccountId, stripeGeneratedToken, headerDataSplit) {
+  function prepareCurlData_split(stripeConnectedAccountId, stripeGeneratedToken, HeaderDataSplit, CustomerObj) {
     var qPrepare = $q.defer();
-
+    
     // init
     var curlData = {
       stripeConnectedAccountId:   stripeConnectedAccountId,
-      stripeSource:               stripeGeneratedToken,
       stripeCurrency:             "usd",
-      stripeAmount:               headerDataSplit.amount,
-      stripeDescription:          COMPANY_NAME + ",purchase," + headerDataSplit.productId + "," + headerDataSplit.name,
-      stripeBuyerId:              headerDataSplit['buyerId'],
-      stripeProductId:            headerDataSplit['productId'],
-      applicationFee:             headerDataSplit.applicationFee,
+      stripeAmount:               HeaderDataSplit.amount,
+      stripeDescription:          COMPANY_NAME + ",purchase," + HeaderDataSplit.productId + "," + HeaderDataSplit.name,
+      stripeBuyerId:              HeaderDataSplit['buyerId'],
+      stripeProductId:            HeaderDataSplit['productId'],
+      applicationFee:             HeaderDataSplit.applicationFee,
+    };
+    
+    // stripeConnectedAccountId == STRIPE_OWNER_ACCOUNT_ID
+    // This holds true when:
+    // - the seller is the owner
+    // stripeConnectedAccountId =/= STRIPE_OWNER_ACCOUNT_ID
+    // This holds truen when:
+    // - the seller is not the owner
+    // - the seller has setup Stripe Connect
+    if(stripeConnectedAccountId == STRIPE_OWNER_ACCOUNT_ID) {
+      
+      // charge the customer directly
+      curlData['stripe_url']        =  STRIPE_URL_CHARGE_CUSTOMER; 
+      curlData['stripeCustomerId']  =  CustomerObj.id;
+      console.log('CHARGE/CUSTOMER/', HeaderDataSplit.productId);
+      
+    } else {
+      
+      // charge using the generated token
+      curlData['stripe_url']        =  STRIPE_URL_CHARGE; 
+      curlData['stripeSource']      =  stripeGeneratedToken;
+      console.log('CHARGE/', HeaderDataSplit.productId)
+
     };
 
-    // optionally, retrieve other details async here (such as profiledata of user)
-    // in this exercise it has been left out
     qPrepare.resolve(curlData);
     return qPrepare.promise;
   };
@@ -485,24 +476,22 @@ angular.module('starter.services-payment', [])
   /**
    * Get a stripe token through the checkout handler
    */
-  self.getStripeToken = function(headerData) {
+  self.getStripeToken = function(HeaderData) {
     var qToken = $q.defer();
 
     var handler = StripeCheckout.configure({
-        name: headerData.name,
+        name: HeaderData.name,
         token: function(token, args) {
           //console.log(token.id)
         }
     })
 
-    handler.open(headerData).then(
+    handler.open(HeaderData).then(
       function(result) {
         var stripeToken = result[0].id;
         if(stripeToken != undefined && stripeToken != null && stripeToken != "") {
-            //console.log("handler success - defined")
             qToken.resolve(stripeToken);
         } else {
-            //console.log("handler success - undefined")
             qToken.reject("ERROR_STRIPETOKEN_UNDEFINED");
         }
       }, function(error) {
@@ -568,15 +557,11 @@ angular.module('starter.services-payment', [])
     $http.post(STRIPE_CREATE_CUSTOMER, {stripeToken: stripeToken})
     .success(
       function(response){
-        
-        console.log('createCustomers', response);
-        
-        if(response != null) {
+        if(response != null && response != undefined) {
           qCreate.resolve(response);
         } else {
           qCreate.reject("ERROR_NULL");
         }
-        
       }
     )
     .error(
@@ -593,64 +578,70 @@ angular.module('starter.services-payment', [])
    */
   self.createToken = function(stripeCustomerId, stripeConnectedAccountId, stopNext) {
     var qCreate = $q.defer();
-    $http.post(STRIPE_CREATE_TOKEN, 
-    {
-      stripeCustomerId: stripeCustomerId,
-      stripeConnectedAccountId: stripeConnectedAccountId,
-    })
-    .success(
-      function(responseToken){
-        
-        console.log('createToken', responseToken);
-        
-        // did it pass?
-        if(responseToken != null) {
-          
-          // response with stripe_user_id:
-          //    pass
-          // response with id
-          //    token only (?)
-          if(responseToken.hasOwnProperty('stripe_user_id') || responseToken.hasOwnProperty('id')) {
-            // ... pass
-            handleSuccess(responseToken);
-          } else {
-            handleError("ERROR_INVALID");
-          };
-          
-        } else {
-          handleError("ERROR_NULL");
+    
+    //
+    if(stripeConnectedAccountId == STRIPE_OWNER_ACCOUNT_ID) {
+        qCreate.resolve('owner');
+    } else {
+        proceedCreateToken();
+    };
+    
+    function proceedCreateToken() {
+        //
+        var curlData = {
+            stripeCustomerId: stripeCustomerId,
+            stripeConnectedAccountId: stripeConnectedAccountId,
         };
-        
-        // fn handle success
-        function handleSuccess(responseTokenFinal) {
-          qCreate.resolve(responseTokenFinal);
-        };
-        
-        // fn handle error
-        function handleError(error) {
-          
-          if(stopNext != true) {
-            console.log("WARNING! Using CUSTOM ACCOUNT ID");
-            self.createToken(stripeCustomerId, STRIPE_OWNER_ACCOUNT_ID, true).then(
-              function(responseTokenAdj){
-                handleSuccess(responseTokenAdj);
-              },
-              function(error){
+      
+       $http.post(STRIPE_CREATE_TOKEN, curlData)
+        .success(
+          function(responseToken){
+            
+            // did it pass?
+            if(responseToken != null) {
+              
+              // response with stripe_user_id:
+              //    pass
+              // response with id
+              //    token only (?)
+              if(responseToken.hasOwnProperty('stripe_user_id') || responseToken.hasOwnProperty('id')) {
+                // ... pass
+                handleSuccess(responseToken);
+              } else {
+                handleError("ERROR_INVALID");
+              };
+              
+            } else {
+              handleError("ERROR_NULL");
+            };
+            
+            // fn handle success
+            function handleSuccess(responseTokenFinal) {
+              qCreate.resolve(responseTokenFinal);
+            };
+            
+            // fn handle error
+            function handleError(error) {
+              
+              if(stopNext != true) {
+                console.log("WARNING! Using custom account id");
+                qCreate.resolve('owner');
+              } else {
                 qCreate.reject(error);
-              }
-            )
-          } else {
-            qCreate.reject(error);
-          };
-          
-        };
-      } // ./ success
-    )
-    .error(
-      function(error){
-        qCreate.reject(error);
-      }
-    );
+              };
+              
+            };
+          } // ./ success
+        )
+        .error(
+            function(error){
+                qCreate.reject(error);
+            }
+        );
+      
+      
+    }; // proceedCreateToken
+   
     return qCreate.promise;
   };
 

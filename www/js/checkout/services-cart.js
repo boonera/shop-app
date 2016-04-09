@@ -1,7 +1,7 @@
 angular.module('starter.services-cart', [])
 
 /**
-* Wallet Management
+* Cart Management
 */
 .factory('Cart', function($q, Utils) {
   var self = this;
@@ -98,7 +98,6 @@ angular.module('starter.services-cart', [])
         passedTest = false;
       }
     };
-    console.log('passedTest', passedTest)
     if(!passedTest) {
       Utils.showMessage('Seems you forgot to choose an attribute!', 1500);
     }

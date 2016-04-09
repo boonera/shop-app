@@ -10,7 +10,11 @@ angular.module('starter.services-orders', [])
 
   self.OrdersData = {}; //cache
   self.OrdersDataArray = [];
-
+  
+  /**
+   * Retrieves all orders for a user
+   * Formats it to an array for sorting
+   */
   self.getOrders = function(uid) {
     var qGet = $q.defer();
     var ref = new Firebase(FBURL);
@@ -39,7 +43,7 @@ angular.module('starter.services-orders', [])
   };
   
   /**
-   * Depreciated in Ionic Shop ++
+   * Depreciated
    */
   self.addOrder = function(uid, OrderData) {
     var qUpdate = $q.defer();
@@ -58,20 +62,20 @@ angular.module('starter.services-orders', [])
     return qUpdate.promise;
   };
   
-  self.prepareOrderData = function(productId, Cart, StripeInvoiceData) {
-    // remove screenshot or other images (optional)
+  
+  /**
+   * prepares the order data object which is stored on firebase
+   * this object is used to retrieve all the required info of the orderId
+   */
+  self.prepareOrderData = function(Cart, StripeInvoiceData) {
+
     var CachedMetaAdj = Cart.CachedMeta;
-    console.log("**prepareOrderData**", CachedMetaAdj)
-    
     if(CachedMetaAdj.hasOwnProperty('screenshot1')){delete CachedMetaAdj['screenshot1']};
     
     var OrderData = {
-      StripeInvoiceData: StripeInvoiceData[productId],
-      paymentId:    StripeInvoiceData[productId]['balance_transaction'],
-      timestamp:    Firebase.ServerValue.TIMESTAMP,
-      CachedTotal:  Cart.CachedTotal[productId],
-      CachedMeta:   CachedMetaAdj[productId],
-      CachedList:   Cart.CachedList[productId],
+      timestamp:          Firebase.ServerValue.TIMESTAMP,
+      StripeInvoiceData:  StripeInvoiceData,
+      Cart:               Cart,
     };
     
     return OrderData;

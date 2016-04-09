@@ -86,13 +86,11 @@ angular.module('starter.controllers-checkout', [])
 
   $scope.ProfileData = {};
   function loadProfileData() {
-    console.log('load profiledata')
     if($scope.AuthData.hasOwnProperty('uid')){
       $scope.status['loadingProfile'] = true;
       Profile.get($scope.AuthData.uid).then(
         function(ProfileData) {
           if(ProfileData != null) {
-            console.log(ProfileData)
             $scope.ProfileData = ProfileData;
           }
           $scope.status['loadingProfile'] = false;
@@ -126,7 +124,6 @@ angular.module('starter.controllers-checkout', [])
       function(orderId){
         $scope.status['orderId'] = orderId;
         handleSuccess();
-        console.log('success', orderId)
       },
       function(SaleObj){
         $scope.SaleObj = SaleObj;
@@ -134,7 +131,6 @@ angular.module('starter.controllers-checkout', [])
       },
       function(SaleObj){
         $scope.SaleObj = SaleObj;
-        console.log('update', SaleObj)
       }
     );
 

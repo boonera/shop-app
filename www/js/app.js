@@ -41,7 +41,7 @@ var LIMITVALUE_LATEST           = 4; // show only the X latest given the sortMet
 
 var STRIPE_URL_CHARGE               = SERVER_SIDE_URL + "/charge";
 var STRIPE_URL_CHARGE_NODESTINATION = SERVER_SIDE_URL + "/charge/nodestination";
-var STRIPE_URL_CHARGE_SPLIT         = SERVER_SIDE_URL + "/charge/split";
+var STRIPE_URL_CHARGE_CUSTOMER      = SERVER_SIDE_URL + "/charge/customer";
 var STRIPE_FIREBASE_GEN_TOKEN       = SERVER_SIDE_URL + "/firebase/generatetoken";
 var STRIPE_URL_AUTHORIZE            = SERVER_SIDE_URL + "/authorize";
 var STRIPE_CREATE_CUSTOMER          = SERVER_SIDE_URL + "/savecustomer";

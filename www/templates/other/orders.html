@@ -26,12 +26,12 @@
       <!--Loaded -->
       <ion-list>
         <ion-item 
-          class="item item-text-wrap" ng-repeat="order in OrdersDataArray | orderBy: '-value.timestamp'"
-          ng-click="goToOrder(order.key)">
-          <h2>{{order.key}}</h2>
-          <p>{{order.value.CachedTotal.total_count}} item(s), ${{order.value.CachedTotal.total_value_incl.toFixed(2)}}</p>
+          class="item item-text-wrap" ng-repeat="orderObj in OrdersDataArray | orderBy: '-value.timestamp'"
+          ng-click="goToOrder(orderObj.key)">
+          <h2>{{orderObj.key}}</h2>
+          <p>{{orderObj.value.Cart.CachedTotal.total_count}} item(s) &nbsp;&nbsp; ${{orderObj.value.Cart.CachedTotal.total_value_incl.toFixed(2)}}</p>
           <span class="badge badge-balanced">
-            {{formatTimestamp(order.value.timestamp)}}
+            {{formatTimestamp(orderObj.value.timestamp)}}
           </span>
           
         </ion-item>
