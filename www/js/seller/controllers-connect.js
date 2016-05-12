@@ -26,8 +26,6 @@ angular.module('starter.controllers-connect', [])
     StripeCharge.getStripeConnectAuth_value($scope.AuthData.uid)
       .then(function(SCData) {
         
-        console.log(SCData)
-        
         // bind to DOM
         $scope.SCData = SCData;
         $scope.status['loadingStripeConnect']    = false;
@@ -38,9 +36,15 @@ angular.module('starter.controllers-connect', [])
           $scope.status['setupStripeConnect']  = false; 
           $scope.status['generateNewToken']    = true;
         } else {
-          // stripe connect has been setup, resolve
-          $scope.status['setupStripeConnect']  = true;
-          $scope.status['generateNewToken']    = false;
+          if(SCData.hasOwnProperty('stripe_user_id')) {
+            // stripe connect has been setup, resolve
+            $scope.status['setupStripeConnect']  = true;
+            $scope.status['generateNewToken']    = false;
+          } else {
+            // stripe not setup, generate a new token
+            $scope.status['setupStripeConnect']  = false; 
+            $scope.status['generateNewToken']    = true;
+          };
         };
       })
       .catch(function(error) {

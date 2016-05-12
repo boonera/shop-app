@@ -30,9 +30,9 @@
 // Useful link: https://dashboard.stripe.com/account/apikeys
 //
 var FBURL                       = 'https://boonera.firebaseio.com';  
-var SERVER_SIDE_URL             = 'https://shop-server-boonera.c9users.io';    // https://boonera.herokuapp.com // https://shop-server-boonera.c9users.io
-var STRIPE_API_PUBLISHABLE_KEY  = 'pk_test_BFpVnroY1MeVBLhd0VrtLHtj'; // pk_live_Dalb47kvY9zKHd5DvsWHXiq7 pk_test_BFpVnroY1MeVBLhd0VrtLHtj
-var STRIPE_OWNER_ACCOUNT_ID     = 'acct_16bvtBHW84OuTX9V'; 
+var SERVER_SIDE_URL             = 'https://boonera.herokuapp.com';              // https://boonera.herokuapp.com // https://shop-server-boonera.c9users.io
+var STRIPE_API_PUBLISHABLE_KEY  = 'pk_test_Vo7sZlttBI3EB5Lz6HyvIHlq';           // pk_live_kCiUOTgutU0QUlzO5ggVpTA6  pk_test_Vo7sZlttBI3EB5Lz6HyvIHlq
+var STRIPE_OWNER_ACCOUNT_ID     = 'acct_17bJENCIA3AZAtXJ'; 
 
 // Other settings
 var COMPANY_NAME                = "Boonera";

@@ -365,12 +365,22 @@ angular.module('starter.services-payment', [])
   function filterEmptyDestAccountIds_fn(SCDatas) {
     var SCDatas_Adj = SCDatas;
     angular.forEach(SCDatas, function(value, productId){
-      if(value == null || value == undefined) {
-        SCDatas_Adj[productId] = {
-          replaced: true,
-          stripe_user_id: STRIPE_OWNER_ACCOUNT_ID
+        if(value != null && value != undefined) {
+            if(!value.hasOwnProperty('stripe_user_id')) {
+                useOwnerAccount();
+            } else {
+                // pass
+            }
+        } else {
+            useOwnerAccount();
         };
-      }
+        // ---
+        function useOwnerAccount() {
+            SCDatas_Adj[productId] = {
+              replaced: true,
+              stripe_user_id: STRIPE_OWNER_ACCOUNT_ID
+            };
+        };
     })
     return SCDatas_Adj;
   };
@@ -465,7 +475,7 @@ angular.module('starter.services-payment', [])
       // charge using the generated token
       curlData['stripe_url']        =  STRIPE_URL_CHARGE; 
       curlData['stripeSource']      =  stripeGeneratedToken;
-      console.log('CHARGE/', HeaderDataSplit.productId)
+      console.log('CHARGE/TOKEN/', HeaderDataSplit.productId)
 
     };
 
